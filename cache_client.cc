@@ -155,7 +155,7 @@ Cache::val_type Cache::get(key_type key, size_type& val_size) const{
     //GET /key
 
     http::request<http::string_body> req = pImpl_->prep_req(http::verb::get, "/"+key, pImpl_->udp_port_);
-    http::response<http::dynamic_body> res = pImpl_->send_udp(req);
+    http::response<http::dynamic_body> res = pImpl_->send_tcp(req);//changed back to tcp since UDP lacks timeout and may not be funcitonal
     if(res.result() == http::status::not_found){
         return nullptr;
     }
