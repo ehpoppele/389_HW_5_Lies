@@ -71,9 +71,7 @@ TEST_CASE("Gen Request")
             driver.gen_req(true);//true here indicates that responses should be printed
         }
     }
-
     //no reset since this is the end of the current driver
-
 }
 
 /*

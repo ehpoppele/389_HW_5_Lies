@@ -7,12 +7,15 @@
 #include <boost/random/variate_generator.hpp>
 #include <chrono>
 #include <iostream>
-
+#include <vector>
+#include <tuple>
+#include <cmath>
 //The constructor doesn't do much, since we leave most of the heavy lifting on distribution generation etc to the warm method
 Driver::Driver(Cache* cache, int temporal_bias)
 {
     temporal_bias_ = temporal_bias;
     cache_ = cache;
+    cache_ = std::make_unique<Cache>(cache);
     total_prob_ = 0;
 }
 
@@ -146,4 +149,29 @@ std::tuple<key_type, Cache::val_type, std::string> Driver::gen_req(bool print_re
 void Driver::reset()
 {
     cache_->reset();
+// warm generates new data and adds to vector until cache has gotten at least size total data
+
+
+//genreq draws from vector based on distribution
+std::tuple<std::string, std::string, std::string> Driver::gen_req(bool verbose) {
+    std::tuple<std::string, std::string, std::string>req = std::make_tuple("hello", "world", "!");
+    if(verbose){
+        std::cout << std::get<0>(req)<<  std::endl;
+    }
+    return req;
+}
+
+// param: number of requests to make
+// return: vector containing the time for each measurement
+std::vector<double> Driver::baseline_latencies(int nreq) {
+    std::vector<double> results(nreq, 0.0);
+    std::chrono::time_point<std::chrono::high_resolution_clock> t1;
+    std::chrono::time_point<std::chrono::high_resolution_clock> t2;
+    for(int i = 0; i < nreq; i++) {
+        t1 = std::chrono::high_resolution_clock::now();
+        gen_req(true);
+        t2 = std::chrono::high_resolution_clock::now();
+        // results[i] = t2 - t1;
+    }
+    return results;
 }

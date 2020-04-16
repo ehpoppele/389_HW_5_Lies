@@ -22,6 +22,7 @@
 #include "tcp_listener.hh"
 #include "udp_handler.hh"
 #include "request_processor.hh"
+#include "fifo_evictor.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
