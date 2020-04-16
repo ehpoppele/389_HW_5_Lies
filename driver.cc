@@ -15,7 +15,6 @@ Driver::Driver(Cache* cache, int temporal_bias)
 {
     temporal_bias_ = temporal_bias;
     cache_ = cache;
-    cache_ = std::make_unique<Cache>(cache);
     total_prob_ = 0;
 }
 
@@ -150,15 +149,6 @@ void Driver::reset()
 {
     cache_->reset();
 // warm generates new data and adds to vector until cache has gotten at least size total data
-
-
-//genreq draws from vector based on distribution
-std::tuple<std::string, std::string, std::string> Driver::gen_req(bool verbose) {
-    std::tuple<std::string, std::string, std::string>req = std::make_tuple("hello", "world", "!");
-    if(verbose){
-        std::cout << std::get<0>(req)<<  std::endl;
-    }
-    return req;
 }
 
 // param: number of requests to make

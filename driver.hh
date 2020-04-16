@@ -41,7 +41,7 @@ class Driver {
         //Generates a new request for the cache; the size, frequency, values, etc. are chosen at random based on the distributions in the driver's private data
         //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
-        std::tuple<std::string, std::string, std::string> gen_req(bool print_results=false);
+        std::tuple<key_type, Cache::val_type, std::string> gen_req(bool verbose=false);
 
         //Delete driver data and reset cache as well
         void reset();
