@@ -64,7 +64,9 @@ int main(int ac, char* av[])
             return 1;
         }
 
-        Cache server_cache(maxmem);
+        //Added evictor as default
+        FifoEvictor evictor = FifoEvictor();
+        Cache server_cache(maxmem, evictor);
         Cache* server_cache_p = &server_cache;
         boost::asio::io_context ioc{threads};
         request_processor helper;
