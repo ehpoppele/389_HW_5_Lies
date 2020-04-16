@@ -22,6 +22,7 @@
 #include "tcp_listener.hh"
 #include "udp_handler.hh"
 #include "request_processor.hh"
+#include "fifo_evictor.h"
 
 namespace beast = boost::beast;         // from <boost/beast.hpp>
 namespace http = beast::http;           // from <boost/beast/http.hpp>
@@ -66,7 +67,7 @@ int main(int ac, char* av[])
 
         //Added evictor as default
         FifoEvictor evictor = FifoEvictor();
-        Cache server_cache(maxmem, evictor);
+        Cache server_cache(maxmem);
         Cache* server_cache_p = &server_cache;
         boost::asio::io_context ioc{threads};
         request_processor helper;

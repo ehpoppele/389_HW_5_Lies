@@ -5,7 +5,7 @@
 class Driver {
 
     public:
-        using data_type = std:tuple<byte_type, val_type, size_type, int>; //holds key, value, size, and probability
+        using data_type = std::tuple<key_type, Cache::val_type, Cache::size_type, double>; //holds key, value, size, and probability
         //It would be reasonable to stor key as a byte_type, used for keys, but I don't want to deal with that
         //So for now I'll convert at the time that we make the call? or not?
 
@@ -27,10 +27,10 @@ class Driver {
         Driver& operator=(const Driver&) = delete;
 
         //Requests a single set from the cache
-        void set_request(key_type key, val_type val, size_type size);
+        void set_request(key_type key, Cache::val_type val, Cache::size_type size);
 
         //Requests a single get from the cache; we don't need the size back here since we mostly don't care about the value being returned
-        val_type get_request(key_type key);
+        Cache::val_type get_request(key_type key);
 
         //Requests a single delete from the cache
         bool del_request(key_type key);
@@ -44,13 +44,14 @@ class Driver {
         //Generates n new requests to the cache; the size, frequency, values, etc. are chosen at random based on the distributions in the driver's private data
         //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
-        void gen_req(bool print_results, //for testing purposes; will print the requests and reponses in gen_req
-                     int n);
+        std::tuple<std::string, std::string, std::string> gen_req(bool print_results=false);
 
         //returns the hitrate of the cache based on the hit/miss data; will have to do the division itself to save having to do that every time a new request either hits or misses
         double hitrate();
 
         //Delete driver data and reset cache as well
         void reset();
+
+        std::vector<double> baseline_latencies(int nreq);
 
 };

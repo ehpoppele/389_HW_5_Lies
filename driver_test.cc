@@ -63,10 +63,9 @@ TEST_CASE("Gen Request")
     SECTION("Print Test"){
         std::cout << std::endl; << "Look over the next 10 lines and check for any unexpected behavior:" << std::endl;
         driver.gen_req(true, 10);//true here indicates that responses should be printed
+        std::cout << std::endl; << "end prints" << std::endl;
     }
-
     //no reset since this is the end of the current driver
-
 }
 
 //new driver here; use appropriate params
