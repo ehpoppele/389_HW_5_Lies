@@ -84,9 +84,9 @@ TEST_CASE("Size and Capacity") //uses no evictor and therefore should reject onc
         test_cache.set("key_one", "value_1", 8);
         test_cache.set("key_two", "value_2", 8);
         test_cache.set("key_three", "value_3", 8);
-        test_cache.set("key_four", "value_4", 8);//should be blocked since we're already at 24/30 capacity
+        test_cache.set("key_four", "value_4", 8);
 
-        REQUIRE(test_cache.get("key_four", size) == nullptr);
+        REQUIRE(test_cache.get("key_one", size) == nullptr);
 
         test_cache.reset();
     }

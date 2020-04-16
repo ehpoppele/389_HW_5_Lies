@@ -11,7 +11,7 @@
 #include <string>
 #include <iterator>
 #include "cache.hh"
-#include "evictor.hh"
+#include "fifo_evictor.h"
 #include <algorithm>
 #include <cstdlib>
 #include <functional>
@@ -66,8 +66,9 @@ int main(int ac, char* av[])
         }
 
         //Added evictor as default
-        FifoEvictor evictor = FifoEvictor();
-        Cache server_cache(maxmem);
+        FifoEvictor fifo_evictor = FifoEvictor();
+        Evictor* evictor = &fifo_evictor;
+        Cache server_cache(maxmem, 0.75, evictor);
         Cache* server_cache_p = &server_cache;
         boost::asio::io_context ioc{threads};
         request_processor helper;
