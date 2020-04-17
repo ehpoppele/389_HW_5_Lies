@@ -37,8 +37,9 @@ void Driver::warm(int size)
     //std::normal_distribution<double> val_dist_low(1.0, 3.0);
     //std::uniform_int_distribution<int> val_dist_mid(10, 500);
     //std::normal_distribution<int> val_dist_high(0.0, 1500.0);
-    boost::mt19937 randGen(15);
-    boost::math::pareto_distribution val_dist(214.476, 0.348238);
+    boost::mt19937 randGen(std::chrono::system_clock::now().time_since_epoch().count());
+    //boost::math::pareto_distribution val_dist(214.476, 0.348238);
+    boost::math::pareto_distribution val_dist;
     boost::random::uniform_real_distribution<> uniformReal(1.0,5000.0); //this range can be adjusted to effect values
     boost::variate_generator<boost::mt19937&,boost::random::uniform_real_distribution<>> generator(randGen, uniformReal);
     while(size_used < 2*size){//we want the cache full and still plenty of pairs left; pointless to test if cache can hold 100% of data
@@ -61,7 +62,9 @@ void Driver::warm(int size)
         //with thanks to MS_DDOS on stack exchange for being seemingly the only person to actually answer a question about boost pareto use, even if it was their own question
         double cdfComplement;
         cdfComplement = boost::math::cdf(complement(val_dist,generator()));
+        std::cout << cdfComplement << std::endl;
         int val_size = std::clamp((int)cdfComplement, 1, 5000);//convert?
+        std::cout << val_size << std::endl;
         std::string val_str = std::string(val_size, 'B');//the values for entries are just the character "B" repeated up to 5000 times
         Cache::val_type val = val_str.c_str();
         size_used += val_size;
@@ -114,7 +117,7 @@ std::tuple<key_type, Cache::val_type, std::string> Driver::gen_req(bool print_re
         if(method_dist(rng) < 25){//8/9 of deletes should delete a nonexistent key to keep the cache full
             int dummy_key_length = std::clamp((int)key_dist(rng), 15, 70);
             if(print_results){
-                std::cout << std::string(dummy_key_length, 'f') + ", "<< 1 + ", "<< method << std::endl;
+                std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
             }
             return std::make_tuple(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
         }
@@ -131,13 +134,15 @@ std::tuple<key_type, Cache::val_type, std::string> Driver::gen_req(bool print_re
         //iterate through
         current += std::get<2>(data_[i]);
         i+=1;
+        //std::cout << std::get<0>(data_[i]) << std::endl;
 
     }
+    kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
     std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
     Cache::val_type val = val_str.c_str();
     if(print_results){
-        std::cout << key << std::get<1>(kv_tuple) + ", " << method + ", "<< std::endl;
+        std::cout << key  + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
     }
     return std::make_tuple(key, val, method);
 }
