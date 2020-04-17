@@ -76,7 +76,7 @@ Generator::~Generator()
 
 }
 
-std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print_results)
+Request Generator::gen_req(bool print_results)
 {
     std::random_device rd;
     std::mt19937 rng{rd()};
@@ -125,5 +125,5 @@ std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print
     if(print_results){
         std::cout << key  + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
     }
-    return std::make_tuple(key, val, method);
+    return Request(key, val, method);
 }
