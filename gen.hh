@@ -1,4 +1,5 @@
-#include "cache/cache.hh"//need for the cache types; no actual cache invoved yet
+
+#include "request.hh"
 
 //The driver class creates a networked cache, then runs commands on it
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
@@ -26,6 +27,7 @@ class Generator {
         //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
         //will return the key, val, and method
-        req_type gen_req(bool print_results); //for testing purposes; will print the requests and reponses in gen_req
+
+        Request gen_req(bool print_results); //for testing purposes; will print the requests and reponses in gen_req
 
 };
