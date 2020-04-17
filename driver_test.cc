@@ -4,7 +4,8 @@
 #include "driver.hh"
 
 Generator gen = Generator(10, 0.5, 10000, 2);
-auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+auto test_cache = Cache(1024); //Add the appropriate params here once chosen
 //auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
@@ -48,12 +49,11 @@ TEST_CASE("hitrate")
 {
     SECTION("Hitrate 1"){
         driver.warm(1024);
-        const int trials = 100;
+        const int trials = 10;
         int hits = 0;
         int gets = 0;
         while (gets < trials) {
             auto req = gen.gen_req(false);
-            // Cache::val_type val = std::get<1>(req);
             std::string method = req.method_;
             if(method == "get") {
                 std::cout << "key: " << req.key_;

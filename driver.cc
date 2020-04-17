@@ -29,6 +29,7 @@ void Driver::warm(int size)
 {
     int sets = 0;
     while(sets < size) {
+        Request req = gen_.gen_req(false);
         if(req.method_ == "set") {
             cache_->set(req.key_, req.val_, std::strlen(req.val_));
             sets += 1;
