@@ -121,11 +121,12 @@ Request Generator::gen_req(bool print_results)
     }
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
-    std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
-    val_type val = val_str.c_str();
+    //std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
+    //val_type val = val_str.c_str();
+    int val_size = std::get<1>(kv_tuple);
     if(print_results){
         std::cout << key + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
         //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return Request(key, val, method);
+    return Request(key, val_size, method);
 }
