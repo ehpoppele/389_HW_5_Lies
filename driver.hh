@@ -1,4 +1,5 @@
 #include "cache.hh"
+#include <chrono>
 
 //The driver class creates a networked cache, then runs commands on it
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
@@ -13,6 +14,7 @@ class Driver {
         std::vector<key_type> keys_;//key vector, which keeps track of the keys that have actually been used so far; i don't remember why we need this...
         int total_prob_; //tracks the sum total of the probability entries in the data vector, as this is fixed after one warm call
         int temporal_bias_;
+        using req_type=std::tuple<key_type, Cache::val_type, std::string>;
 
     public:
         Driver(Cache* cache, int temporal_bias = 10);
@@ -41,11 +43,13 @@ class Driver {
         //Generates a new request for the cache; the size, frequency, values, etc. are chosen at random based on the distributions in the driver's private data
         //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
-        std::tuple<std::string, std::string, std::string> gen_req(bool print_results=false);
+        std::tuple<key_type, Cache::val_type, std::string> gen_req(bool verbose=false);
 
         //Delete driver data and reset cache as well
         void reset();
 
-        std::vector<double> baseline_latencies(int nreq);
+        std::vector<std::chrono::milliseconds> baseline_latencies(int nreq);
+
+        std::pair<double, double> baseline_performance(int nreq);
 
 };
