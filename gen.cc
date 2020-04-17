@@ -22,7 +22,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
     std::mt19937 rng{rd()};
     std::normal_distribution<double> key_dist(43.0, 9.0);//want a normal dist spanning 15-70, so use this and clamp later
     std::uniform_int_distribution<int> percent_dist(0, 100);
-    std::normal_distribution<double> val_dist_low(1.0, 3.0);
+    std::normal_distribution<double> val_dist_low(2.0, 3.0);
     std::uniform_int_distribution<int> val_dist_mid(10, 500);
     std::normal_distribution<double> val_dist_high(0.0, 1500.0);
     //boost::mt19937 randGen(std::chrono::system_clock::now().time_since_epoch().count());
@@ -40,7 +40,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
 
         int p = percent_dist(rng);
         if(p < 40){
-            val_size = std::clamp((int)(abs(val_dist_low(rng))), 1, 10);//use the normal dist, but want only positive nums and no greater than 10
+            val_size = std::clamp((int)(abs(val_dist_low(rng))), 2, 10);//use the normal dist, but want only positive nums and no greater than 10
         } else if(p < 90){
             val_size = val_dist_mid(rng);
         } else {
@@ -57,7 +57,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         */
         //std::string val_str = std::string(val_size, 'B');//the values for entries are just the character "B" repeated up to 5000 times
         //Cache::val_type val = val_str.c_str();
-        std::cout << val_size << std::endl;
+        // std::cout << val_size << std::endl;
         size_used += val_size;
         int prob;
         p = percent_dist(rng);
@@ -76,7 +76,8 @@ Generator::~Generator()
 
 }
 
-std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print_results)
+
+Request Generator::gen_req(bool print_results)
 {
     std::random_device rd;
     std::mt19937 rng{rd()};
@@ -93,7 +94,7 @@ std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print
             if(print_results){
                 std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
             }
-            return std::make_tuple(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
+            Request(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
         }
     } else {
         method = "set";
@@ -109,7 +110,7 @@ std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print
         current += std::get<2>(data_[i]);
         i+=1;
         if(i >= data_.size()){
-            i = data_.size();
+            i = 0;
         }
         //std::cout << std::get<0>(data_[i]) << std::endl;
 
@@ -121,9 +122,10 @@ std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
     std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
-    Cache::val_type val = val_str.c_str();
+    val_type val = val_str.c_str();
     if(print_results){
-        std::cout << key  + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
+        std::cout << key + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
+        //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return std::make_tuple(key, val, method);
+    return Request(key, val, method);
 }

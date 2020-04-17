@@ -1,14 +1,14 @@
 #define CATCH_CONFIG_MAIN
 #include <iostream>
 #include "catch.hpp"
-#include "cache.hh" //Can probably remove this? once I get the subclass in its own thing
-#include "fifo_evictor.h"
 #include "driver.hh"
 
-auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+Generator gen = Generator(10, 0.5, 10000, 2);
+// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+auto test_cache = Cache(1024); //Add the appropriate params here once chosen
 //auto driver = driver();
 Cache::size_type size;
-auto driver = Driver(&test_cache);
+auto driver = Driver(&test_cache, gen);
 
 //Tests to ensure the driver has a connection to the server
 //And that all types of basic requests are actually working and getting a response
@@ -48,27 +48,26 @@ TEST_CASE("Cache Warming")
 TEST_CASE("hitrate")
 {
     SECTION("Hitrate 1"){
+        driver.warm(1024);
+        const int trials = 10;
         int hits = 0;
         int gets = 0;
-        while (gets < 1000000) {
-            auto req = driver.gen_req(false);
-            // Cache::val_type val = std::get<1>(req);
-            std::string method = std::get<2>(req);
+        while (gets < trials) {
+            auto req = gen.gen_req(false);
+            std::string method = req.method_;
             if(method == "get") {
-                key_type key = std::get<0>(req);
-                std::cout << "key: " << key;
+                std::cout << "key: " << req.key_;
                 gets += 1;
-                Cache::val_type res = driver.get_request(key);
+                Cache::val_type res = driver.get_request(req.key_);
                 if(res != nullptr){
                     std::cout << std::endl;
                     hits += 1;
                 } else {
-                    std::cout << "not found" << std::endl;
-
+                    std::cout << "\t not found" << std::endl;
                 }
             }
         }
-        REQUIRE(hits > 800000);
+        REQUIRE(hits > trials * 0.8);
     }
 
     driver.reset();
@@ -83,7 +82,7 @@ TEST_CASE("Gen Request")
         driver.warm(30);
         std::cout  << "Look over the next 10 lines and check for any unexpected behavior:" << std::endl;
         for(int i = 0; i < 10; i++){
-            driver.gen_req(true);//true here indicates that responses should be printed
+            gen.gen_req(true);//true here indicates that responses should be printed
         }
     }
     //no reset since this is the end of the current driver

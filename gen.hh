@@ -1,4 +1,6 @@
-#include "cache.hh"//need for the cache types; no actual cache invoved yet
+
+#include "request.hh"
+#include <vector>
 
 //The driver class creates a networked cache, then runs commands on it
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
@@ -6,7 +8,7 @@ class Generator {
 
     public:
         using data_type = std::tuple<key_type, int, int>; //holds key, value size, and probability
-
+        using req_type = Request;
     private:
         std::vector<data_type> data_;//data vector, which holds all the kv pairs and their data that will be used for this driver
         int total_prob_; //tracks the sum total of the probability entries in the data vector, as this is fixed after one warm call
@@ -26,6 +28,7 @@ class Generator {
         //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
         //will return the key, val, and method
-        std::tuple<key_type, Cache::val_type, std::string> gen_req(bool print_results); //for testing purposes; will print the requests and reponses in gen_req
+
+        Request gen_req(bool print_results); //for testing purposes; will print the requests and reponses in gen_req
 
 };
