@@ -37,10 +37,7 @@ class Cache {
   // evictor: Eviction policy implementation (if nullptr, no evictions occur
   // and new insertions fail after maxmem has been exceeded).
   // hasher: Hash function to use on the keys. Defaults to C++'s std::hash.
-  Cache(size_type maxmem,
-        float max_load_factor = 0.75,
-        Evictor* evictor = nullptr,
-        hash_func hasher = std::hash<key_type>());
+  Cache(size_type maxmem, float max_load_factor = 0.75, Evictor* evictor = nullptr, hash_func hasher = std::hash<key_type>());
 
   // Create a new Cache networked client with a given host and port.
   Cache(std::string host, std::string tcp_port, std::string udp_port = "9001");
