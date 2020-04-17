@@ -1,8 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <iostream>
 #include "catch.hpp"
-#include "cache.hh" //Can probably remove this? once I get the subclass in its own thing
-#include "fifo_evictor.h"
 #include "driver.hh"
 
 Generator gen = Generator(10, 0.5, 10000, 2);
@@ -58,10 +56,9 @@ TEST_CASE("hitrate")
             // Cache::val_type val = std::get<1>(req);
             std::string method = req.method_;
             if(method == "get") {
-                key_type key = req.key_;
-                std::cout << "key: " << key;
+                std::cout << "key: " << req.key_;
                 gets += 1;
-                Cache::val_type res = driver.get_request(key);
+                Cache::val_type res = driver.get_request(req.key_);
                 if(res != nullptr){
                     std::cout << std::endl;
                     hits += 1;

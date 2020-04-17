@@ -29,9 +29,8 @@ void Driver::warm(int size)
 {
     int sets = 0;
     while(sets < size) {
-        Request req = gen_.gen_req(false);
         if(req.method_ == "set") {
-            cache_->set(req.key_, req.val_, strlen(req.val_));
+            cache_->set(req.key_, req.val_, std::strlen(req.val_));
             sets += 1;
         }
     }
@@ -74,7 +73,7 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
     for(int i = 0; i < nreq; i++) {
         Request req = gen_.gen_req(false);
         Cache::size_type size = 0;
-        if(req.method_ == "get") {
+        if(req.method_ =="get") {
             Cache::val_type response;
             t1 = std::chrono::high_resolution_clock::now();
             response = cache_->get(req.key_, size);
