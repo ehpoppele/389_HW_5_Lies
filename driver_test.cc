@@ -44,20 +44,35 @@ TEST_CASE("Cache Warming")
     driver.reset();
 }
 
-/*
-TEST_CASE("Hitrate Function")
-{
 
+TEST_CASE("hitrate")
+{
     SECTION("Hitrate 1"){
-      driver.set_request("key_one", "value_1", 8);
-      driver.get_request("key_one");
-      driver.get_request("key_two");
-      REQUIRE(driver.hitrate() == 0.5);
+        int hits = 0;
+        int gets = 0;
+        while (gets < 1000000) {
+            auto req = driver.gen_req(false);
+            // Cache::val_type val = std::get<1>(req);
+            std::string method = std::get<2>(req);
+            if(method == "get") {
+                key_type key = std::get<0>(req);
+                std::cout << "key: " << key;
+                gets += 1;
+                Cache::val_type res = driver.get_request(key);
+                if(res != nullptr){
+                    std::cout << std::endl;
+                    hits += 1;
+                } else {
+                    std::cout << "not found" << std::endl;
+
+                }
+            }
+        }
+        REQUIRE(hits > 800000);
     }
 
     driver.reset();
 }
-*/
 
 TEST_CASE("Gen Request")
 {
@@ -71,11 +86,15 @@ TEST_CASE("Gen Request")
             driver.gen_req(true);//true here indicates that responses should be printed
         }
     }
-
     //no reset since this is the end of the current driver
-
 }
 
+TEST_CASE("performance") {
+    SECTION("part a") {
+        driver.warm(30);
+        driver.baseline_performance(1000000);
+    }
+}
 /*
 //new driver here; use appropriate params
 TEST_CASE("80% Hitrate")
