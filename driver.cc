@@ -28,9 +28,10 @@ void Driver::warm(int size)
 {
     int sets = 0;
     while(sets < size) {
-        req_type req = gen_.gen_req(false);
-        if(req.method == "set") {
-            cache_->set(req.key, req.val, req.val.length());
+        Generator::req_type req = gen_.gen_req(false);
+        if(req.method_ == "set") {
+            cache_->set(req.key_, req.val_, std::strlen(req.val_));
+            sets += 1;
         }
     }
 }
@@ -72,23 +73,23 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
     for(int i = 0; i < nreq; i++) {
         Generator::req_type req = gen_.gen_req(false);
         Cache::size_type size = 0;
-        if(req.method=="get") {
+        if(req.method_ =="get") {
             Cache::val_type response;
             t1 = std::chrono::high_resolution_clock::now();
-            response = cache_->get(req.key, size);
+            response = cache_->get(req.key_, size);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
             if(response != nullptr) {
                 hits += 1;
             }
-        } else if (req.method == "set") {
+        } else if (req.method_ == "set") {
             t1 = std::chrono::high_resolution_clock::now();
-            cache_->set(req.key, req.val, req.val.length());
+            cache_->set(req.key_, req.val_, std::strlen(req.val_));
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
-        } else if (req.method == "del") {
+        } else if (req.method_ == "del") {
             t1 = std::chrono::high_resolution_clock::now();
-            cache_->del(req.key);
+            cache_->del(req.key_);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         }

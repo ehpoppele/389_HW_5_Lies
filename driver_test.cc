@@ -1,15 +1,13 @@
 #define CATCH_CONFIG_MAIN
 #include <iostream>
 #include "catch.hpp"
-#include "cache.hh" //Can probably remove this? once I get the subclass in its own thing
-#include "fifo_evictor.h"
 #include "driver.hh"
 
 Generator gen = Generator(10, 0.5, 10000, 2);
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
 //auto driver = driver();
 Cache::size_type size;
-auto driver = Driver(&test_cache, gen, 10);
+auto driver = Driver(&test_cache, gen);
 
 //Tests to ensure the driver has a connection to the server
 //And that all types of basic requests are actually working and getting a response
@@ -56,12 +54,11 @@ TEST_CASE("hitrate")
         while (gets < trials) {
             auto req = gen.gen_req(false);
             // Cache::val_type val = std::get<1>(req);
-            std::string method = std::get<2>(req);
+            std::string method = req.method_;
             if(method == "get") {
-                key_type key = std::get<0>(req);
-                std::cout << "key: " << key;
+                std::cout << "key: " << req.key_;
                 gets += 1;
-                Cache::val_type res = driver.get_request(key);
+                Cache::val_type res = driver.get_request(req.key_);
                 if(res != nullptr){
                     std::cout << std::endl;
                     hits += 1;
