@@ -30,7 +30,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
     //boost::math::pareto_distribution val_dist;
     //boost::random::uniform_real_distribution<> uniformReal(1.0,5000.0); //this range can be adjusted to effect values
     //boost::variate_generator<boost::mt19937&,boost::random::uniform_real_distribution<>> generator(randGen, uniformReal);
-    while(size_used < size_factor*size){//we want the cache full and still plenty of pairs left; pointless to test if cache can hold 100% of data
+    while(size_used <= size_factor*size){//we want the cache full and still plenty of pairs left; pointless to test if cache can hold 100% of data
         //First generate a new data tuple based on our distributions
         int key_size = std::clamp((int)key_dist(rng), 15, 70); //should be normal dist between 15 and 70
         int padding = (int)(log10(1000000 - i));//since cache has max memory of ~1mil bytes, should never need more than that many keys
