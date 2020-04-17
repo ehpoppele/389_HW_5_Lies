@@ -22,7 +22,7 @@ net_test.bin: cache_client.o fifo_evictor.o
 	$(CXX) $(LDFLAGS) test_lib_networked.cc -o $@ $^
 get_test.bin: cache_client.o fifo_evictor.o
 	$(CXX) $(LDFLAGS) get_test.cc -o $@ $^
-driver_test.bin: cache_client.o fifo_evictor.o driver.o
+driver_test.bin: cache_client.o fifo_evictor.o driver.o gen.o
 	$(CXX) $(LDFLAGS) driver_test.cc -o $@ $^
 gen_test.bin: gen.o
 	$(CXX) $(LDFLAGS) gen_test.cc -o $@ $^
