@@ -120,7 +120,7 @@ Request Generator::gen_req(bool print_results)
         current_locality_ = 0;//reset before the next call happens
     }
     kv_tuple = data_[i];
-    key_type key = std::get<0>(kv_tuple);Skirsdag
+    key_type key = std::get<0>(kv_tuple);
     std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
     val_type val = val_str.c_str();
     if(print_results){

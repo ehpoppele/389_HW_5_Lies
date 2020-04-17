@@ -6,7 +6,7 @@ class Generator {
 
     public:
         using data_type = std::tuple<key_type, int, int>; //holds key, value size, and probability
-        using req_type = std::tuple<key_type, Cache::val_type, std::string>;
+        using req_type = std::tuple<key_type, val_type, std::string>;
     private:
         std::vector<data_type> data_;//data vector, which holds all the kv pairs and their data that will be used for this driver
         int total_prob_; //tracks the sum total of the probability entries in the data vector, as this is fixed after one warm call

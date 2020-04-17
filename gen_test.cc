@@ -7,5 +7,6 @@
 
 int main() {
     auto gen = Generator(10, 0.5, 10000, 2);
+    //print
     return 0;
 }
