@@ -93,7 +93,7 @@ Request Generator::gen_req(bool print_results)
             if(print_results){
                 std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
             }
-            return std::make_tuple(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
+            Request(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
         }
     } else {
         method = "set";
@@ -121,7 +121,7 @@ Request Generator::gen_req(bool print_results)
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
     std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
-    Cache::val_type val = val_str.c_str();
+    val_type val = val_str.c_str();
     if(print_results){
         std::cout << key  + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
     }
