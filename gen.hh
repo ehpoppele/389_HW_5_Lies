@@ -1,4 +1,4 @@
-#include "cache.hh"//need for the cache types; no actual cache invoved yet
+#include "cache/cache.hh"//need for the cache types; no actual cache invoved yet
 
 //The driver class creates a networked cache, then runs commands on it
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
