@@ -6,14 +6,12 @@
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
 class Driver {
 
-    public:
-
     private:
         Cache* cache_;
         Generator gen_;
 
     public:
-        Driver(Cache* cache, Generator gen, int temporal_bias = 10);
+        Driver(Cache* cache, Generator gen);
 
         ~Driver();
 
