@@ -5,11 +5,12 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/variate_generator.hpp>
-#include <chrono>
 #include <iostream>
 #include <vector>
 #include <tuple>
 #include <cmath>
+
+const int PERCENTILE_METRIC = 95;
 //The constructor doesn't do much, since we leave most of the heavy lifting on distribution generation etc to the warm method
 Driver::Driver(Cache* cache, int temporal_bias)
 {
@@ -112,7 +113,7 @@ std::tuple<key_type, Cache::val_type, std::string> Driver::gen_req(bool print_re
     if(p < 21){
         method = "get";
     } else if (p < 30){
-        method = "delete";
+        method = "del";
         if(method_dist(rng) < 25){//8/9 of deletes should delete a nonexistent key to keep the cache full
             int dummy_key_length = std::clamp((int)key_dist(rng), 15, 70);
             if(print_results){
@@ -153,15 +154,49 @@ void Driver::reset()
 
 // param: number of requests to make
 // return: vector containing the time for each measurement
-std::vector<double> Driver::baseline_latencies(int nreq) {
-    std::vector<double> results(nreq, 0.0);
+std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
+    std::vector<std::chrono::milliseconds> results(nreq);
     std::chrono::time_point<std::chrono::high_resolution_clock> t1;
     std::chrono::time_point<std::chrono::high_resolution_clock> t2;
+    int hits = 0;
     for(int i = 0; i < nreq; i++) {
-        t1 = std::chrono::high_resolution_clock::now();
-        gen_req(true);
-        t2 = std::chrono::high_resolution_clock::now();
-        // results[i] = t2 - t1;
+        req_type req = gen_req(false);
+        key_type key = std::get<0>(req);
+        Cache::val_type val = std::get<1>(req);
+        std::string method = std::get<2>(req);
+        Cache::size_type size = 0;
+        if(method=="get") {
+            Cache::val_type response;
+            t1 = std::chrono::high_resolution_clock::now();
+            response = cache_->get(key, size);
+        // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
+            t2 = std::chrono::high_resolution_clock::now();
+            if(response != nullptr) {
+                hits += 1;
+            }
+        } else if (method == "set") {
+            t1 = std::chrono::high_resolution_clock::now();
+            cache_->set(key, val, size);
+        // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
+            t2 = std::chrono::high_resolution_clock::now();
+        } else if (method == "del") {
+            t1 = std::chrono::high_resolution_clock::now();
+            cache_->del(key);
+        // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
+            t2 = std::chrono::high_resolution_clock::now();
+        }
+        std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
+        results[i] = duration;
     }
+    std::cout << "hit rate: " << hits / nreq << std::endl;
     return results;
+}
+
+std::pair<double, double> Driver::baseline_performance(int nreq) {
+    std::vector<std::chrono::milliseconds> latencies = baseline_latencies(nreq);
+    int index = PERCENTILE_METRIC * nreq / 100;
+    std::sort(latencies.begin(), latencies.end());
+    double percentile = latencies[index].count();
+    double throughput = 0;
+    return std::make_pair(percentile, throughput);
 }
