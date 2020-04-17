@@ -1,4 +1,5 @@
 #include "request.hh"
+#include <vector>
 
 //The driver class creates a networked cache, then runs commands on it
 //It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
