@@ -57,7 +57,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         */
         //std::string val_str = std::string(val_size, 'B');//the values for entries are just the character "B" repeated up to 5000 times
         //Cache::val_type val = val_str.c_str();
-        std::cout << val_size << std::endl;
+        // std::cout << val_size << std::endl;
         size_used += val_size;
         int prob;
         p = percent_dist(rng);
@@ -76,7 +76,7 @@ Generator::~Generator()
 
 }
 
-std::tuple<key_type, Cache::val_type, std::string> Generator::gen_req(bool print_results)
+Generator::req_type Generator::gen_req(bool print_results)
 {
     std::random_device rd;
     std::mt19937 rng{rd()};
