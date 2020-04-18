@@ -9,9 +9,9 @@ struct Request {
     //val_type val_;
     int val_size_;
     std::string method_;
-    Request(key_type key, Cache::val_type val, std::string method){
+    Request(key_type key, int val_size, std::string method){
         key_ = key;
-        val_ = val;
+        val_size_ = val_size;
         method_ = method;
     }
 };
