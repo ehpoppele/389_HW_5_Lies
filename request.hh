@@ -6,7 +6,8 @@ using byte_type = char;
 
 struct Request {
     key_type key_;
-    Cache::val_type val_;
+    //val_type val_;
+    int val_size_;
     std::string method_;
     Request(key_type key, Cache::val_type val, std::string method){
         key_ = key;
