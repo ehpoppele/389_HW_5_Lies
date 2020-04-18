@@ -20,21 +20,9 @@ int main() {
     while(total< 100000) {
         Request req = gen.gen_req(false);
         if(req.method_ == "set") {
-            if(req.key_ == "") {
-                std::cout << "Failed on setting empty key, at " << total << "with " << req.key_ << std::endl;
-                return -1;
-            }
-            /*
-            if(strlen(req.val_) == 0) {
-                std::cout << "failed on setting empty value, at " << total<< "with " << req.key_ << std::endl;
-                return -1;
-            }
-            */
-        }
-        if(req.method_ == "get") {
-            if(req.key_ == "") {
-                std::cout << "failed on getting empty key, at " << total << "with " << req.key_ << std::endl;
-                return -1;
+            // std::cout << req.val_;
+            if(req.val_size_ == 0) {
+                zero_length_vals += 1;
             }
         }
         total++;
