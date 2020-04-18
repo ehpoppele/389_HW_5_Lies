@@ -23,18 +23,21 @@ int main() {
     // std::cout << duration.count()<< "ms" << std::endl;
 
     int sets = 0;
-    while(sets< 100000) {
+    double zero_length_keys = 0.0;
+    int trials = 10000;
+
+    while(sets < trials) {
         Request req = gen.gen_req(false);
         // std::cout << ".";
         if(req.method_ == "set") {
-            if(req.key_ == "") {
-                std::cout << "failed on set " << sets << std::endl;
-                return -1;
+            // std::cout << req.val_;
+            if(strlen(req.val_) == 0) {
+                zero_length_keys += 1;
             }
             // std::cout << "\n" << req.method_ << " key: " << req.key_ << " to: " << req.val_ << std::endl;
             sets+= 1;
         }
     }
-    std::cout << "passed" << std::endl;
+    std::cout << zero_length_keys << " of " << trials << " keys tested had length 0 (" << zero_length_keys / sets << "%)" << std::endl;
     return 0;
 }

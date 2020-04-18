@@ -133,5 +133,5 @@ Request Generator::gen_req(bool print_results)
         std::cout << key + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
         //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return Request(key, val, method);
+    return Request(key, val_size, method);
 }
