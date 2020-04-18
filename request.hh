@@ -2,7 +2,6 @@
 
 using key_type = std::string;
 using byte_type = char;
-using val_type = const byte_type*;
 
 struct Request {
     key_type key_;
