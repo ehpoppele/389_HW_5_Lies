@@ -1,5 +1,6 @@
 
 #include "request.hh"
+#include "cache/cache.hh"
 #include <vector>
 
 //The driver class creates a networked cache, then runs commands on it

@@ -39,6 +39,6 @@ int main() {
         }
         total++;
     }
-    std::cout << zero_length_keys << " of " << trials << " keys tested had length 0 (" << zero_length_keys / sets << "%)" << std::endl;
+    std::cout << zero_length_vals << " of " << trials << " values found tested had length 0 (" << zero_length_vals / sets * 100<< "%)" << std::endl;
     return 0;
 }
