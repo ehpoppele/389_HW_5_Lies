@@ -23,8 +23,9 @@ int main() {
     // std::cout << duration.count()<< "ms" << std::endl;
 
     int sets = 0;
-    double zero_length_keys = 0.0;
-    int trials = 10000;
+    double zero_length_vals = 0.0;
+    double correct_vals = 0.0;
+    int trials = 1000;
 
     while(sets < trials) {
         Request req = gen.gen_req(false);
@@ -32,12 +33,12 @@ int main() {
         if(req.method_ == "set") {
             // std::cout << req.val_;
             if(strlen(req.val_) == 0) {
-                zero_length_keys += 1;
+                zero_length_vals += 1;
             }
             // std::cout << "\n" << req.method_ << " key: " << req.key_ << " to: " << req.val_ << std::endl;
             sets+= 1;
         }
     }
-    std::cout << zero_length_keys << " of " << trials << " keys tested had length 0 (" << zero_length_keys / sets << "%)" << std::endl;
+    std::cout << zero_length_vals << " of " << trials << " values found tested had length 0 (" << zero_length_vals / sets * 100<< "%)" << std::endl;
     return 0;
 }
