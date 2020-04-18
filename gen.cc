@@ -63,6 +63,9 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         p = percent_dist(rng);
         prob = (int)(1000)/(p+1)^2;
         total_prob_+= prob;
+        if(key == ""){
+            std::cout << "Zero key added to data" << std::endl;
+        }
         data_type data_tuple = std::make_tuple(key, val_size, prob);
         data_.push_back(data_tuple);
         i++;
@@ -121,6 +124,9 @@ Request Generator::gen_req(bool print_results)
     }
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
+    if(key == ""){
+        std::cout << "Zero key being returned" << std::endl;
+    }
     std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
     val_type val = val_str.c_str();
     if(print_results){

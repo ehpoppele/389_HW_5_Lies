@@ -38,7 +38,7 @@ TEST_CASE("Cache Warming")
 
     SECTION("Warm"){//adds new values to cache summing to given size
         driver.warm(30);
-        REQUIRE(driver.head_request() <= 40);//fix this
+        REQUIRE(driver.head_request() >= 40);//fix this
     }
 
     driver.reset();
@@ -49,7 +49,7 @@ TEST_CASE("hitrate")
 {
     SECTION("Hitrate 1"){
         driver.warm(1024);
-        const int trials = 10;
+        const int trials = 1000;
         int hits = 0;
         int gets = 0;
         while (gets < trials) {
@@ -67,6 +67,7 @@ TEST_CASE("hitrate")
                 }
             }
         }
+        std::cout<< "hits :" + std::to_string(hits) << "out of " + std::to_string(trials) << std::endl;
         REQUIRE(hits > trials * 0.8);
     }
 
@@ -85,7 +86,7 @@ TEST_CASE("Gen Request")
             gen.gen_req(true);//true here indicates that responses should be printed
         }
     }
-    //no reset since this is the end of the current driver
+    driver.reset();
 }
 
 TEST_CASE("performance") {

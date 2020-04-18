@@ -27,7 +27,7 @@ int main() {
         Request req = gen.gen_req(false);
         // std::cout << ".";
         if(req.method_ == "set") {
-            if(strlen(req.val_) == 0) {
+            if(req.key_ == "") {
                 std::cout << "failed on set " << sets << std::endl;
                 return -1;
             }
