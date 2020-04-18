@@ -3,14 +3,15 @@
 #include "catch.hpp"
 #include "driver.hh"
 
-Generator gen = Generator(10, 0.5, 10000, 2);
+Generator gen = Generator(120, 0.3, 8192, 120);
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-// auto test_cache = Cache(1024); //Add the appropriate params here once chosen
+//auto test_cache = Cache(8192); //Add the appropriate params here once chosen
+
 //auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
 
-//Tests to ensure the driver has a connection to the server
+//Tests to ensure the driver has a connection to the server/cache
 //And that all types of basic requests are actually working and getting a response
 // TEST_CASE("Connection")
 // {
@@ -29,6 +30,7 @@ auto driver = Driver(&test_cache, gen);
 //     driver.reset();//resets cache, hitrate, and ... ?
 // }
 
+
 TEST_CASE("Cache Warming")
 {
     SECTION("HEAD"){
@@ -37,7 +39,7 @@ TEST_CASE("Cache Warming")
     }
 
     SECTION("Warm"){//adds new values to cache summing to given size
-        driver.warm(30);
+        driver.warm(50);
         REQUIRE(driver.head_request() >= 40);//fix this
     }
 
@@ -45,56 +47,41 @@ TEST_CASE("Cache Warming")
 }
 
 
-TEST_CASE("hitrate")
+TEST_CASE("Hitrate")
 {
-    SECTION("Hitrate 1"){
-        driver.warm(100);
-        const int trials = 10;
+
+    SECTION("Hitrate at ~80%"){
+        driver.warm(10000);
+        const int trials = 10000;
         int hits = 0;
         int gets = 0;
         while (gets < trials) {
             auto req = gen.gen_req(true);
             std::string method = req.method_;
             if(method == "get") {
-                // std::cout << "key: " << req.key_;
                 gets += 1;
                 Cache::val_type res = driver.get_request(req.key_);
                 if(res != nullptr){
-                    std::cout << std::endl;
                     hits += 1;
-                } else {
-                    std::cout << "\t not found" << std::endl;
                 }
             }
         }
         std::cout<< "hits :" + std::to_string(hits) << "out of " + std::to_string(trials) << std::endl;
-        REQUIRE(hits > trials * 0.8);
+        REQUIRE(hits > trials * 0.75);
+        REQUIRE(hits < trials * 0.85);
     }
 
     driver.reset();
 }
 
-TEST_CASE("Gen Request")
-{
-    //In this case, the results are printed, and the human tester
-    //should observe a mix of get/set/delete requests with appropriate
-    //results being processed
-    SECTION("Print Test"){
-        driver.warm(30);
-        std::cout  << "Look over the next 10 lines and check for any unexpected behavior:" << std::endl;
-        for(int i = 0; i < 10; i++){
-            gen.gen_req(true);//true here indicates that responses should be printed
-        }
-    }
-    driver.reset();
-}
-
+/*
 TEST_CASE("performance") {
     SECTION("part a") {
         driver.warm(30);
         driver.baseline_performance(1000000);
     }
 }
+*/
 /*
 //new driver here; use appropriate params
 TEST_CASE("80% Hitrate")
