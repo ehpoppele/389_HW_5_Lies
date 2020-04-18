@@ -4,31 +4,32 @@
 #include "driver.hh"
 
 Generator gen = Generator(120, 0.3, 8192, 120);
-// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-auto test_cache = Cache(8192); //Add the appropriate params here once chosen
+auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+//auto test_cache = Cache(8192); //Add the appropriate params here once chosen
+
 //auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
 
 //Tests to ensure the driver has a connection to the server/cache
 //And that all types of basic requests are actually working and getting a response
-TEST_CASE("Connection")
-{
+// TEST_CASE("Connection")
+// {
+//
+//     SECTION("SET/GET"){//can't test set without using get
+//         driver.set_request("key_one", "value_1", 8);
+//         Cache::val_type val = "value_2";
+//         REQUIRE(*driver.get_request("key_one") == *val);
+//     }
+//
+//     SECTION("DELETE"){
+//         REQUIRE(driver.del_request("key_one") == true);
+//         REQUIRE(driver.get_request("key_one") == nullptr);
+//     }
+//
+//     driver.reset();//resets cache, hitrate, and ... ?
+// }
 
-    SECTION("SET/GET"){//can't test set without using get
-        driver.set_request("key_one", "value_1", 8);
-        Cache::val_type val = "value_2";
-        REQUIRE(*driver.get_request("key_one") == *val);
-    }
-
-    SECTION("DELETE"){
-        driver.set_request("key_one", "value_1", 8);
-        REQUIRE(driver.del_request("key_one") == true);
-        REQUIRE(driver.get_request("key_one") == nullptr);
-    }
-
-    driver.reset();//resets cache, hitrate, and ... ?
-}
 
 TEST_CASE("Cache Warming")
 {
@@ -48,13 +49,14 @@ TEST_CASE("Cache Warming")
 
 TEST_CASE("Hitrate")
 {
+
     SECTION("Hitrate at ~80%"){
         driver.warm(10000);
         const int trials = 10000;
         int hits = 0;
         int gets = 0;
         while (gets < trials) {
-            auto req = gen.gen_req(false);
+            auto req = gen.gen_req(true);
             std::string method = req.method_;
             if(method == "get") {
                 gets += 1;

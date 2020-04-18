@@ -134,5 +134,5 @@ Request Generator::gen_req(bool print_results)
         std::cout << key + ", "<< std::to_string(val_size) + ", " << method << std::endl;
         //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return Request(key, val_size, method);
+    return Request(key, val, method);
 }
