@@ -32,7 +32,7 @@ int main() {
         // std::cout << ".";
         if(req.method_ == "set") {
             // std::cout << req.val_;
-            if(strlen(req.val_) == 0) {
+            if(req.val_size_ == 0) {
                 zero_length_vals += 1;
             }
             // std::cout << "\n" << req.method_ << " key: " << req.key_ << " to: " << req.val_ << std::endl;

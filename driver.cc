@@ -32,8 +32,10 @@ void Driver::warm(int size)
         Request req = gen_.gen_req(false);
         if(req.method_ == "set") {
             std::cout << req.method_ << " "<< req.key_ << " to "<< req.val_ << std::endl;
-            cache_->set(req.key_, req.val_, std::strlen(req.val_));
-            size_used += std::strlen(req.val_);
+            std::string val_str = std::string(req.val_size_, 'B');
+            Cache::val_type val = val_str.c_str();
+            cache_->set(req.key_, val, req.val_size_);
+            size_used += req.val_size_;
         }
     }
 }
@@ -75,6 +77,8 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
     for(int i = 0; i < nreq; i++) {
         Request req = gen_.gen_req(false);
         Cache::size_type size = 0;
+        std::string val_str = std::string(req.val_size_, 'B');
+        Cache::val_type val = val_str.c_str();
         if(req.method_ =="get") {
             Cache::val_type response;
             t1 = std::chrono::high_resolution_clock::now();
@@ -86,7 +90,7 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
             }
         } else if (req.method_ == "set") {
             t1 = std::chrono::high_resolution_clock::now();
-            cache_->set(req.key_, req.val_, strlen(req.val_));
+            cache_->set(req.key_, val, req.val_size_);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         } else if (req.method_ == "del") {
