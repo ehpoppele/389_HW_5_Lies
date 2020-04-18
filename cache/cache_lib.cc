@@ -2,8 +2,6 @@
 #include <tuple>
 #include "cache.hh"
 
-#include <iostream>
-
 using entry_type = std::pair<Cache::val_type, Cache::size_type>; //To better track size for entries
 
 class Cache::Impl{
@@ -34,7 +32,6 @@ void Cache::set(key_type key, val_type val, size_type size) {
 // TODO: if we overwrite an existing value, free the old memory first by del-ing the old value
 
     if(pImpl_->dict_.find(key) != pImpl_->dict_.end()) {
-        // std::cout << "overwriting existing key" << std::endl;
         del(key);
     }
 

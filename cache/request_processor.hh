@@ -82,7 +82,6 @@ public:
         //Maybe add error checking to ensure the things are of the correct types? or not necessary?
         if(req.method() == http::verb::put)
         {
-            std::cout << "putting" << std::endl;
             //First we extract the key and the value from the request target
             std::stringstream target_string(std::string(req.target()).substr(1)); //Slice off the first "/" then make a sstream for further slicing
             std::string key_str;
@@ -102,6 +101,7 @@ public:
             size = val_str.length()+1;
             std::cout << "setting...";
             server_cache->set(key, val, size);
+            std::cout << "done" << std::endl;
             //Now we can create and send the response
             res.set(boost::beast::http::field::content_location, "/" + key_str);
             //set the appropriate status code based on if a new entry was created
@@ -118,9 +118,8 @@ public:
 
         //Will send a response for if key was deleted or not found; same effects either way
         if(req.method() == http::verb::delete_) {
-            std::cout << "deleting ";
             key_type key = std::string(req.target()).substr(1);
-            std::cout << key << "...";
+            std::cout << "deleting " << key << "...";
             auto success = server_cache->del(key);
             if(success){
                 std::cout << "done" << std::endl;
@@ -149,8 +148,10 @@ public:
                 return not_found(req, std::string(req.target()));
             }
             //Resets the cache and sends back a basic response with string body
+
+            std::cout << "resetting the cache";
             server_cache->reset();
-            std::cout << "resetting the cache" << std::endl;
+            std::cout << "done" << std::endl;
             http::response<boost::beast::http::string_body> res;
             res.result(boost::beast::http::status::ok);
             res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);

@@ -82,7 +82,6 @@ public:
         //Maybe add error checking to ensure the things are of the correct types? or not necessary?
         if(req.method() == http::verb::put)
         {
-            std::cout << "putting" << std::endl;
             //First we extract the key and the value from the request target
             std::stringstream target_string(std::string(req.target()).substr(1)); //Slice off the first "/" then make a sstream for further slicing
             std::string key_str;

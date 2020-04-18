@@ -1,5 +1,6 @@
 
 #include "request.hh"
+#include "cache/cache.hh"
 #include <vector>
 
 //The driver class creates a networked cache, then runs commands on it
@@ -29,6 +30,6 @@ class Generator {
         //gen_req relies on those vectors and will segfault if they are empty (which is their default)
         //will return the key, val, and method
 
-        Request gen_req(bool print_results); //for testing purposes; will print the requests and reponses in gen_req
+        Request gen_req(bool print_results = false); //for testing purposes; will print the requests and reponses in gen_req
 
 };
