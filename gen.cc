@@ -66,6 +66,9 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         if(key == ""){
             std::cout << "Zero key added to data" << std::endl;
         }
+        if(val_size == 0){
+            std::cout << "Zero length value added to data" << std::endl;
+        }
         data_type data_tuple = std::make_tuple(key, val_size, prob);
         data_.push_back(data_tuple);
         i++;
@@ -97,7 +100,7 @@ Request Generator::gen_req(bool print_results)
             if(print_results){
                 std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
             }
-            Request(std::string(dummy_key_length, 'f'), "B", method);//this is not a key that will ever be used for "set"
+            Request(std::string(dummy_key_length, 'f'), 1, method);//this is not a key that will ever be used for "set"
         }
     } else {
         method = "set";
@@ -124,14 +127,12 @@ Request Generator::gen_req(bool print_results)
     }
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
-    if(key == ""){
-        std::cout << "Zero key being returned" << std::endl;
-    }
-    std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
-    val_type val = val_str.c_str();
+    int val_size = std::get<1>(kv_tuple);
+    //std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
+    //val_type val = val_str.c_str();
     if(print_results){
-        std::cout << key + ", "<< std::to_string(std::get<1>(kv_tuple)) + ", " << method << std::endl;
+        std::cout << key + ", "<< std::to_string(val_size) + ", " << method << std::endl;
         //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return Request(key, val, method);
+    return Request(key, val_size, method);
 }
