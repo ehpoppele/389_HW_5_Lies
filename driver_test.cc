@@ -3,10 +3,12 @@
 #include "catch.hpp"
 #include "driver.hh"
 
+const Cache::size_type CACHE_SIZE = 8192;
 Generator gen = Generator(120, 0.3, 8192, 120);
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-//auto test_cache = Cache(8192); //Add the appropriate params here once chosen
+// auto test_cache = Cache(CACHE_SIZE); //Add the appropriate params here once chosen
 
+const int trials = 10000;
 //auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
@@ -34,8 +36,7 @@ auto driver = Driver(&test_cache, gen);
 TEST_CASE("warm")
 {
     SECTION("Warm"){//adds new values to cache summing to given size
-        int size = 10000;
-        driver.warm(size);
+        driver.warm(CACHE_SIZE);
         REQUIRE(driver.head_request() > 0.9 * size);//fix this
     }
 
@@ -47,12 +48,11 @@ TEST_CASE("Hitrate")
 {
 
     SECTION("Hitrate at ~80%"){
-        driver.warm(1024);
-        const int trials = 10000;
+        driver.warm(CACHE_SIZE);
         int hits = 0;
         int gets = 0;
         while (gets < trials) {
-            auto req = gen.gen_req(true);
+            auto req = gen.gen_req(false);
             std::string method = req.method_;
             if(method == "get") {
                 gets += 1;
@@ -62,7 +62,8 @@ TEST_CASE("Hitrate")
                 }
             }
         }
-        std::cout<< "hits :" + std::to_string(hits) << "out of " + std::to_string(trials) << std::endl;
+        std::cout<< "hits :" + std::to_string(hits) << " out of " + std::to_string(trials) << std::endl;
+        std::cout << "hitrate: " << hits * 100.0 / trials << std::endl;
         REQUIRE(hits > gets * 0.75);
         REQUIRE(hits < gets * 0.85);
     }
@@ -70,14 +71,14 @@ TEST_CASE("Hitrate")
     driver.reset();
 }
 
-/*
 TEST_CASE("performance") {
     SECTION("part a") {
-        driver.warm(30);
-        driver.baseline_performance(1000000);
+        driver.warm(CACHE_SIZE);
+        auto results = driver.baseline_performance(trials);
+        std::cout << "95th percentile latency: " << results.first << std::endl;
+        std::cout << "mean throughput: " << results.second << std::endl;
     }
 }
-*/
 /*
 //new driver here; use appropriate params
 TEST_CASE("80% Hitrate")

@@ -32,7 +32,7 @@ void Driver::warm(int size)
         Request req = gen_.gen_req(false);
         if(req.method_ == "set") {
             std::string val_str = std::string(req.val_size_, 'B');
-            std::cout << req.method_ << " "<< req.key_ << " to "<< val_str << std::endl;
+            // std::cout << req.method_ << " "<< req.key_ << " to "<< val_str << std::endl;
             Cache::val_type val = val_str.c_str();
             cache_->set(req.key_, val, req.val_size_);
             size_used += req.val_size_;
@@ -69,8 +69,8 @@ void Driver::reset()
 
 // param: number of requests to make
 // return: vector containing the time for each measurement
-std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
-    std::vector<std::chrono::milliseconds> results(nreq);
+std::vector<double> Driver::baseline_latencies(int nreq) {
+    std::vector<double> results(nreq);
     std::chrono::time_point<std::chrono::high_resolution_clock> t1;
     std::chrono::time_point<std::chrono::high_resolution_clock> t2;
     int hits = 0;
@@ -99,18 +99,30 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         }
-        std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
-        results[i] = duration;
+        std::chrono::duration<double, std::milli> elapsed = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
+        if(elapsed.count() != 0) {
+            std::cout << elapsed.count() << std::endl;
+        }
+        results[i] = elapsed.count();
     }
     std::cout << "hit rate: " << hits / nreq << std::endl;
     return results;
 }
 
 std::pair<double, double> Driver::baseline_performance(int nreq) {
-    std::vector<std::chrono::milliseconds> latencies = baseline_latencies(nreq);
+    std::vector<double> latencies = baseline_latencies(nreq);
+    int non_zero_latencies = 0;
+    for(int i = 0; i < nreq; i++) {
+        if(latencies[i] != 0) {
+            std::cout << "not 0";
+            non_zero_latencies += 1;
+        }
+    }
+    std::cout << non_zero_latencies << std::endl;
     int index = PERCENTILE_METRIC * nreq / 100;
     std::sort(latencies.begin(), latencies.end());
-    double percentile = latencies[index].count();
-    double throughput = 0;
+    double percentile = latencies[index];
+    std::cout <<  std::accumulate(latencies.begin(), latencies.end(), 0) << std::endl;
+    double throughput = nreq / std::accumulate(latencies.begin(), latencies.end(), 0);
     return std::make_pair(percentile, throughput);
 }
