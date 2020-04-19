@@ -8,7 +8,7 @@
 #include <chrono>
 #include <iostream>
 
-//The constructor does everything
+//The constructor does everything, basically
 Generator::Generator(int locality_range, double locality_shift, int size, double size_factor)
 {
     locality_range_ = locality_range;
@@ -25,11 +25,6 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
     std::normal_distribution<double> val_dist_low(2.0, 3.0);
     std::uniform_int_distribution<int> val_dist_mid(10, 500);
     std::normal_distribution<double> val_dist_high(0.0, 1500.0);
-    //boost::mt19937 randGen(std::chrono::system_clock::now().time_since_epoch().count());
-    //boost::math::pareto_distribution val_dist(214.476, 0.348238);
-    //boost::math::pareto_distribution val_dist;
-    //boost::random::uniform_real_distribution<> uniformReal(1.0,5000.0); //this range can be adjusted to effect values
-    //boost::variate_generator<boost::mt19937&,boost::random::uniform_real_distribution<>> generator(randGen, uniformReal);
     while(size_used <= size_factor*size){//we want the cache full and still plenty of pairs left; pointless to test if cache can hold 100% of data
         //First generate a new data tuple based on our distributions
         int key_size = std::clamp((int)key_dist(rng), 15, 70); //should be normal dist between 15 and 70
@@ -46,18 +41,6 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         } else {
             val_size = std::clamp((int)(abs(val_dist_high(rng))), 0, 4500) + 500;//same as low vals, but need to boost by 500 since dist is centered at 0
         }
-
-        //with thanks to MS_DDOS on stack exchange for being seemingly the only person to actually answer a question about boost pareto use, even if it was their own question
-        /*
-        double cdfComplement;
-        cdfComplement = boost::math::cdf(complement(val_dist,generator()));
-        std::cout << cdfComplement << std::endl;
-        int val_size = std::clamp((int)(5000*cdfComplement), 1, 5000);//convert?
-
-        */
-        //std::string val_str = std::string(val_size, 'B');//the values for entries are just the character "B" repeated up to 5000 times
-        //Cache::val_type val = val_str.c_str();
-        // std::cout << val_size << std::endl;
         size_used += val_size;
         int prob;
         p = percent_dist(rng);
@@ -100,7 +83,7 @@ Request Generator::gen_req(bool print_results)
             if(print_results){
                 std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
             }
-            Request(std::string(dummy_key_length, 'f'), 1, method);//this is not a key that will ever be used for "set"
+            return Request(std::string(dummy_key_length, 'f'), 1, method);//this is not a key that will ever be used for "set"
         }
     } else {
         method = "set";
@@ -118,8 +101,6 @@ Request Generator::gen_req(bool print_results)
         if(i >= data_.size()){
             i = 0;
         }
-        //std::cout << std::get<0>(data_[i]) << std::endl;
-
     }
     current_locality_ += 1;
     if(current_locality_ >= locality_range_/locality_shift_){//If we've reach the end of the data vector
@@ -128,11 +109,11 @@ Request Generator::gen_req(bool print_results)
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
     int val_size = std::get<1>(kv_tuple);
-    //std::string val_str = std::string(std::get<1>(kv_tuple), 'B');
-    //val_type val = val_str.c_str();
+    if(val_size == 0){
+        std::cout << "Returning a length zero value" << std::endl;
+    }
     if(print_results){
         std::cout << key + ", "<< std::to_string(val_size) + ", " << method << std::endl;
-        //std::cout << key  + ", "<<  val_str + ", " << method << std::endl;
     }
-    return Request(key, val, method);
+    return Request(key, val_size, method);
 }

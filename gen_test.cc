@@ -17,10 +17,13 @@ int main() {
     // std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
     // std::cout << duration.count()<< "ms" << std::endl;
     int total = 0;
-    while(total< 100000) {
+    int sets = 0;
+    int zero_length_vals = 0;
+    int trials = 10000;
+    while(sets< trials) {
         Request req = gen.gen_req(false);
         if(req.method_ == "set") {
-            // std::cout << req.val_;
+            sets += 1;
             if(req.val_size_ == 0) {
                 zero_length_vals += 1;
             }
