@@ -31,6 +31,7 @@ void Driver::warm(int size)
     while(size_used < size) {
         Request req = gen_.gen_req(false);
         if(req.method_ == "set") {
+            std::cout << req.method_ << " "<< req.key_ << " to "<< req.val_size_ << std::endl;
             std::string val_str = std::string(req.val_size_, 'B');
             std::cout << req.method_ << " "<< req.key_ << " to "<< val_str << std::endl;
             Cache::val_type val = val_str.c_str();
