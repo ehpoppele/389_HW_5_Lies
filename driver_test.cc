@@ -31,16 +31,12 @@ auto driver = Driver(&test_cache, gen);
 // }
 
 
-TEST_CASE("Cache Warming")
+TEST_CASE("warm")
 {
-    SECTION("HEAD"){
-        driver.set_request("key_one", "value_one", 10);
-        REQUIRE(driver.head_request() == 10);
-    }
-
     SECTION("Warm"){//adds new values to cache summing to given size
-        driver.warm(50);
-        REQUIRE(driver.head_request() >= 40);//fix this
+        int size = 10000;
+        driver.warm(size);
+        REQUIRE(driver.head_request() > 0.9 * size);//fix this
     }
 
     driver.reset();
@@ -51,7 +47,7 @@ TEST_CASE("Hitrate")
 {
 
     SECTION("Hitrate at ~80%"){
-        driver.warm(10000);
+        driver.warm(1024);
         const int trials = 10000;
         int hits = 0;
         int gets = 0;
@@ -67,8 +63,8 @@ TEST_CASE("Hitrate")
             }
         }
         std::cout<< "hits :" + std::to_string(hits) << "out of " + std::to_string(trials) << std::endl;
-        REQUIRE(hits > trials * 0.75);
-        REQUIRE(hits < trials * 0.85);
+        REQUIRE(hits > gets * 0.75);
+        REQUIRE(hits < gets * 0.85);
     }
 
     driver.reset();
