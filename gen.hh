@@ -1,10 +1,8 @@
-
 #include "request.hh"
-#include "cache/cache.hh"
 #include <vector>
 
-//The driver class creates a networked cache, then runs commands on it
-//It can call set, get, or delete, and the params can be adjusted to emulate the ETC workload
+//The generator produces a set of data that emulates the workload of the ETC cache
+//It also can generate a single request from said data based on the appropriate distributions
 class Generator {
 
     public:
@@ -26,10 +24,6 @@ class Generator {
         ~Generator();
 
         //Generates a new request for the cache; the size, frequency, values, etc. are chosen at random based on the distributions in the driver's private data
-        //NOTE: you MUST first warm the cache before using gen_req, since warming will create the appropriate data vectors
-        //gen_req relies on those vectors and will segfault if they are empty (which is their default)
-        //will return the key, val, and method
-
         Request gen_req(bool print_results = false); //for testing purposes; will print the requests and reponses in gen_req
 
 };
