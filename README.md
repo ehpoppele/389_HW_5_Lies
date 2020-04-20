@@ -25,3 +25,6 @@ To actually select a tuple at random, we select some target probability, between
 
 #### Hitrate
 With a cache size of 8192, we found that a `locality_range_` of 8, a `locality_shift_` of 0.2, and a `size_factor_` of 8 got us close to an 80% hitrate. We test this in `driver_test.cc`, first warming the cache and then making one thousand get requests. The hitrate is highly variable for each new cache and the results of warming it; the reasons for this are unclear, but we tried to work around this by taking the average of 100 caches, cleared and warmed each time. This returns a hitrate of about the correct range.
+
+### Driver
+We have implemented our benchmark program in the driver files, `driver.hh` and `driver.cc`. This class takes a generator and a cache, and applies the requests generated to the cache. It has three main functions: `warm`, `baseline_latencies`, and `baseline_performance`.
