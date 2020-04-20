@@ -38,4 +38,5 @@ Using our standard parameters (8KB of memory on a networked cache), we had a 95t
 
 ### Sensitivity Testing
 Using my (Eli's) computer, I got: 95th percentile latency: 0.071494ms ; mean throughput: 3.33333e+07req/s.
+![Linux Latency](/Eli_latency.png)
 
