@@ -1,12 +1,13 @@
 #define CATCH_CONFIG_MAIN
-#include <iostream>
 #include "catch.hpp"
 #include "driver.hh"
+#include <iostream>
+#include <fstream>
 
 const Cache::size_type CACHE_SIZE = 8192;
-Generator gen = Generator(120, 0.3, 8192, 120);
-auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-// auto test_cache = Cache(CACHE_SIZE); //Add the appropriate params here once chosen
+Generator gen = Generator(120, 0.3, CACHE_SIZE, 120);
+// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+auto test_cache = Cache(CACHE_SIZE); //Add the appropriate params here once chosen
 
 const int trials = 10000;
 //auto driver = driver();
@@ -70,6 +71,21 @@ TEST_CASE("Hitrate")
 
     driver.reset();
 }
+TEST_CASE("prep_data") {
+    SECTION("graph") {
+        driver.warm(CACHE_SIZE);
+        auto latencies = driver.baseline_latencies(trials);
+        std::sort(latencies.begin(), latencies.end());
+        std::ofstream output;
+        output.open("latencies.dat");
+        output << "latency (ms)" << std::endl;
+        for(int i = 0; i < trials; i++) {
+            output << latencies[i] << std::endl;
+        }
+        output.close();
+    }
+    driver.reset();
+}
 
 TEST_CASE("performance") {
     SECTION("part a") {
@@ -78,6 +94,7 @@ TEST_CASE("performance") {
         std::cout << "95th percentile latency: " << results.first << std::endl;
         std::cout << "mean throughput: " << results.second << std::endl;
     }
+    driver.reset();
 }
 /*
 //new driver here; use appropriate params

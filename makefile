@@ -18,7 +18,7 @@ clean:
 server.bin: cache_lib.o fifo_evictor.o tcp_listener.o udp_handler.o
 	$(CXX) $(LDFLAGS) cache/cache_server.cc -o $@ $^ /vagrant/systems/boost/lib/libboost_program_options.a
 
-test_driver.bin: fifo_evictor.o driver.o gen.o cache_client.o
+test_driver.bin: fifo_evictor.o driver.o gen.o cache_lib.o
 	$(CXX) $(LDFLAGS) driver_test.cc -o $@ $^
 test_gen.bin: gen.o
 	$(CXX) $(LDFLAGS) gen_test.cc -o $@ $^
