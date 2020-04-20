@@ -16,9 +16,9 @@ clean:
 	rm *.bin
 
 server.bin: cache_lib.o fifo_evictor.o tcp_listener.o udp_handler.o
-	$(CXX) $(LDFLAGS) cache/cache_server.cc -o $@ $^ /vagrant/systems/boost/lib/libboost_program_options.a
+	$(CXX) $(LDFLAGS) cache/cache_server.cc -o $@ $^ /usr/local/boost_1_72_0/ehpop/Documents/lib/libboost_program_options.a
 
-test_driver.bin: cache_client.o fifo_evictor.o driver.o gen.o
+test_driver.bin: cache_lib.o fifo_evictor.o driver.o gen.o
 	$(CXX) $(LDFLAGS) driver_test.cc -o $@ $^
 test_gen.bin: gen.o
 	$(CXX) $(LDFLAGS) gen_test.cc -o $@ $^
