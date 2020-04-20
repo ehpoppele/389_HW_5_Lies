@@ -32,8 +32,11 @@ void Driver::warm(int size)
         Request req = gen_.gen_req(false, true);
         if(req.method_ == "set") {
             std::string val_str = std::string(req.val_size_, 'B');
-            Cache::val_type val = val_str.c_str();
-            cache_->set(req.key_, val, req.val_size_);
+            //Cache::val_type val = val_str.c_str();
+            char * val = new char [req.val_size_+1];
+            std::strcpy (val, val_str.c_str());
+            cache_->set(req.key_, val, req.val_size_+1);
+            delete val;
             sets += 1;
         }
     }
@@ -94,7 +97,7 @@ std::vector<double> Driver::baseline_latencies(int nreq) {
             t2 = std::chrono::high_resolution_clock::now();
         } else if (req.method_ == "set") {
             t1 = std::chrono::high_resolution_clock::now();
-            cache_->set(req.key_, val, req.val_size_);
+            cache_->set(req.key_, val, req.val_size_+1);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         } else if (req.method_ == "del") {
