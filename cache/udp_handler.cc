@@ -12,7 +12,7 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using udp = boost::asio::ip::udp;       // from <boost/asio/ip/udp.hpp>
 
 udp_handler::udp_handler(net::io_context& ioc, udp::endpoint endpoint, Cache* cache, request_processor rp):
-    ioc_(ioc),
+
     socket_(ioc, endpoint)
 {
     processor_ = rp;
