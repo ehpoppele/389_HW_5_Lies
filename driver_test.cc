@@ -9,12 +9,10 @@
 const int CACHE_SIZE = 8192;
 const int TRIALS = 1000000;
 Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
-
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-
-// FifoEvictor fifo_evictor = FifoEvictor();
-// Evictor* evictor = &fifo_evictor;
-// auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
+//FifoEvictor fifo_evictor = FifoEvictor();
+//Evictor* evictor = &fifo_evictor;
+//auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
 
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
@@ -55,22 +53,26 @@ TEST_CASE("Hitrate")
 {
     SECTION("Hitrate at ~80%"){
         int hits = 0;
-        driver.warm(CACHE_SIZE);
-        int gets = 0;
-        while (gets < TRIALS) {
-            auto req = gen.gen_req(false);
-            std::string method = req.method_;
-            if(method == "get") {
-                gets += 1;
-                Cache::val_type res = driver.get_request(req.key_);
-                if(res != nullptr){
-                    hits += 1;
+        int new_trials = 1000;
+        for(int i = 0; i < 100; i++){
+            driver.reset();
+            driver.warm(CACHE_SIZE);
+            int gets = 0;
+            while (gets < new_trials) {
+                auto req = gen.gen_req(false);
+                std::string method = req.method_;
+                if(method == "get") {
+                    gets += 1;
+                    Cache::val_type res = driver.get_request(req.key_);
+                    if(res != nullptr){
+                        hits += 1;
+                    }
                 }
             }
         }
-        std::cout<< "hits : " + std::to_string(hits) << " out of " + std::to_string(TRIALS) << std::endl;
-        REQUIRE(hits > TRIALS * 0.75);
-        REQUIRE(hits < TRIALS * 0.85);
+        std::cout<< "hits : " + std::to_string(hits) << " out of " + std::to_string(new_trials) << std::endl;
+        REQUIRE(hits > new_trials * 100 * 0.75);
+        REQUIRE(hits < new_trials * 100 * 0.85);
     }
 
     driver.reset();
