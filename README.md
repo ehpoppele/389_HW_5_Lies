@@ -37,6 +37,14 @@ Using our standard parameters (8KB of memory on a networked cache), we had a 95t
 ![Standard Latency](/latency&#32;8KB&#32;networked.png)
 
 ### Sensitivity Testing
+For testing, we chose to test underlying architecture, local clients, maximum memory size, and maximum load factor. We present the data for these changes in the same graph format as that of the standard test above. 
+
+For underlying architecture, we ran the networked 8KB test on a different computer, running linux natively as opposed to in a virtual machine. In this case, we could only test this one alternative, so the result is shown in the graph below. Although this second machine is generally slower (we believe) it seems to have an advantage in a native installation as opposed to a virtual machine.
+![Native Linux Latency](/Eli_latency.png)
+
+For local versus networked client, we again had only one option, and so the latency results of running with a local cache instead of a networked cache appear below, and show a significant decrease in latency and an increase in consistency, as expected.
+![Local Latency](/latency&#32;8KB&#32;local.png)
+
 Using my (Eli's) computer, I got: 95th percentile latency: 0.071494ms ; mean throughput: 3.33333e+07req/s.
-![Linux Latency](/Eli_latency.png)
+
 
