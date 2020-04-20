@@ -1,12 +1,21 @@
 #define CATCH_CONFIG_MAIN
-#include <iostream>
 #include "catch.hpp"
 #include "driver.hh"
+#include <iostream>
+#include <fstream>
+#include "cache/fifo_evictor.h"
 
-Generator gen = Generator(120, 0.3, 8192, 120);
+const int CACHE_SIZE = 8192;
+
+Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
+//Generator gen = Generator(120, 0.3, 8192, 120);
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-//auto test_cache = Cache(8192); //Add the appropriate params here once chosen
+//FifoEvictor fifo_evictor = FifoEvictor();
+//Evictor* evictor = &fifo_evictor;
+//auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
 
+
+const int trials = 10000;
 //auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
@@ -31,57 +40,72 @@ auto driver = Driver(&test_cache, gen);
 // }
 
 
-TEST_CASE("Cache Warming")
+TEST_CASE("warm")
 {
-    SECTION("HEAD"){
-        driver.set_request("key_one", "value_one", 10);
-        REQUIRE(driver.head_request() == 10);
-    }
-
     SECTION("Warm"){//adds new values to cache summing to given size
-        driver.warm(50);
-        REQUIRE(driver.head_request() >= 40);//fix this
+        driver.warm(CACHE_SIZE);
+        REQUIRE(driver.head_request() > 0.9 * size);//fix this
     }
 
     driver.reset();
 }
+
 
 
 TEST_CASE("Hitrate")
 {
 
     SECTION("Hitrate at ~80%"){
-        driver.warm(10000);
-        const int trials = 10000;
+        //const int trials = 1000;
         int hits = 0;
-        int gets = 0;
-        while (gets < trials) {
-            auto req = gen.gen_req(true);
-            std::string method = req.method_;
-            if(method == "get") {
-                gets += 1;
-                Cache::val_type res = driver.get_request(req.key_);
-                if(res != nullptr){
-                    hits += 1;
+        for(int i = 0; i < 100; i++){
+            driver.reset();
+            driver.warm(CACHE_SIZE);
+            int gets = 0;
+            while (gets < trials) {
+                auto req = gen.gen_req(false);
+                std::string method = req.method_;
+                if(method == "get") {
+                    gets += 1;
+                    Cache::val_type res = driver.get_request(req.key_);
+                    if(res != nullptr){
+                        hits += 1;
+                    }
                 }
             }
         }
-        std::cout<< "hits :" + std::to_string(hits) << "out of " + std::to_string(trials) << std::endl;
-        REQUIRE(hits > trials * 0.75);
-        REQUIRE(hits < trials * 0.85);
+        std::cout<< "hits : " + std::to_string(hits) << " out of " + std::to_string(trials*10) << std::endl;
+        REQUIRE(hits > trials * 100 * 0.75);
+        REQUIRE(hits < trials * 100 * 0.85);
     }
 
     driver.reset();
 }
+TEST_CASE("prep_data") {
+    SECTION("graph") {
+        driver.warm(CACHE_SIZE);
+        auto latencies = driver.baseline_latencies(trials);
+        std::sort(latencies.begin(), latencies.end());
+        std::ofstream output;
+        output.open("latencies.dat");
+        output << "latency (ms)" << std::endl;
+        for(int i = 0; i < trials; i++) {
+            output << latencies[i] << std::endl;
+        }
+        output.close();
+    }
+    driver.reset();
+}
 
-/*
 TEST_CASE("performance") {
     SECTION("part a") {
-        driver.warm(30);
-        driver.baseline_performance(1000000);
+        driver.warm(CACHE_SIZE);
+        auto results = driver.baseline_performance(trials);
+        std::cout << "95th percentile latency: " << results.first << "ms"<< std::endl;
+        std::cout << "mean throughput: " << results.second << "req/s" << std::endl;
     }
+    driver.reset();
 }
-*/
 /*
 //new driver here; use appropriate params
 TEST_CASE("80% Hitrate")

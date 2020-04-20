@@ -48,6 +48,7 @@ void Cache::set(key_type key, val_type val, size_type size) {
         copy[i] = val[i];
         i++;
     }
+    copy[size-1] = '\0';
     val_type entry_val = copy;
     pImpl_->dict_.insert(std::make_pair(key, std::make_pair(entry_val, size)));
     // need to free copy

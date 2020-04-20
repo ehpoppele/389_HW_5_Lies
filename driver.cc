@@ -27,15 +27,17 @@ Driver::~Driver()
 //It creates tuples of key, val, size, and probability that are drawn from distributions designed to mimic the ETC workload
 void Driver::warm(int size)
 {
-    int size_used = 0;
-    while(size_used < size) {
-        Request req = gen_.gen_req(false);
+    int sets = 0;
+    while(sets < size) {
+        Request req = gen_.gen_req(false, true);
         if(req.method_ == "set") {
-            std::cout << req.method_ << " "<< req.key_ << " to "<< req.val_size_ << std::endl;
             std::string val_str = std::string(req.val_size_, 'B');
-            Cache::val_type val = val_str.c_str();
-            cache_->set(req.key_, val, req.val_size_);
-            size_used += req.val_size_;
+            //Cache::val_type val = val_str.c_str();
+            char * val = new char [req.val_size_+1];
+            std::strcpy (val, val_str.c_str());
+            cache_->set(req.key_, val, req.val_size_+1);
+            delete val;
+            sets += 1;
         }
     }
 }
@@ -69,28 +71,33 @@ void Driver::reset()
 
 // param: number of requests to make
 // return: vector containing the time for each measurement
-std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
-    std::vector<std::chrono::milliseconds> results(nreq);
+std::vector<double> Driver::baseline_latencies(int nreq) {
+    std::vector<double> results(nreq);
     std::chrono::time_point<std::chrono::high_resolution_clock> t1;
     std::chrono::time_point<std::chrono::high_resolution_clock> t2;
-    int hits = 0;
+
+
+
+
+    // double lower_bound = 1;
+    // double upper_bound = 500;
+    // std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
+    // std::default_random_engine re;
+    // double a_random_double = 1.0;
+
     for(int i = 0; i < nreq; i++) {
         Request req = gen_.gen_req(false);
         Cache::size_type size = 0;
         std::string val_str = std::string(req.val_size_, 'B');
         Cache::val_type val = val_str.c_str();
         if(req.method_ =="get") {
-            Cache::val_type response;
             t1 = std::chrono::high_resolution_clock::now();
-            response = cache_->get(req.key_, size);
+            cache_->get(req.key_, size);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
-            if(response != nullptr) {
-                hits += 1;
-            }
         } else if (req.method_ == "set") {
             t1 = std::chrono::high_resolution_clock::now();
-            cache_->set(req.key_, val, req.val_size_);
+            cache_->set(req.key_, val, req.val_size_+1);
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         } else if (req.method_ == "del") {
@@ -99,18 +106,25 @@ std::vector<std::chrono::milliseconds> Driver::baseline_latencies(int nreq) {
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         }
-        std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
-        results[i] = duration;
+        std::chrono::duration<double, std::milli> elapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>> (t2-t1);
+        // if(elapsed.count() != 0) {
+        //     std::cout << elapsed.count() << std::endl;
+        // }
+        results[i] = elapsed.count();
+
+        // a_random_double = unif(re);
+        // results[i] = a_random_double;
+
     }
-    std::cout << "hit rate: " << hits / nreq << std::endl;
     return results;
 }
 
 std::pair<double, double> Driver::baseline_performance(int nreq) {
-    std::vector<std::chrono::milliseconds> latencies = baseline_latencies(nreq);
+    std::vector<double> latencies = baseline_latencies(nreq);
     int index = PERCENTILE_METRIC * nreq / 100;
     std::sort(latencies.begin(), latencies.end());
-    double percentile = latencies[index].count();
-    double throughput = 0;
+    double percentile = latencies[index];
+    double total_latency = std::accumulate(latencies.begin(), latencies.end(), 0);
+    double throughput = nreq / total_latency * std::milli::den;
     return std::make_pair(percentile, throughput);
 }

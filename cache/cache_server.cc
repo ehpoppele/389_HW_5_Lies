@@ -35,7 +35,7 @@ int main(int ac, char* av[])
         boost::program_options::options_description desc("Allowed options");
         desc.add_options()
             ("help,h", "produce help message")
-            ("maxmem", boost::program_options::value<Cache::size_type>() -> default_value(30), "Maximum memory stored in the cache")//had to change from 10000 to 30 for tests to work
+            ("maxmem", boost::program_options::value<Cache::size_type>() -> default_value(8192), "Maximum memory stored in the cache")//had to change from 10000 to 30 for tests to work
             ("port,p", boost::program_options::value<unsigned short>() -> default_value(42069),"TCP Port number")
             ("server,s", boost::program_options::value<std::string>() ->default_value("127.0.0.1"),"IPv4 address of the server in dotted decimal")
             ("threads,t", boost::program_options::value<int>()->default_value(1),"Ignored for now")
