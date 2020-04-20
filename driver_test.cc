@@ -6,15 +6,14 @@
 #include <cmath>
 #include "cache/fifo_evictor.h"
 
-const int CACHE_SIZE = 8192;
+const int CACHE_SIZE = 4096;
 const int TRIALS = 1000000;
 Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
-//auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-FifoEvictor fifo_evictor = FifoEvictor();
-Evictor* evictor = &fifo_evictor;
-auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
+auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+//FifoEvictor fifo_evictor = FifoEvictor();
+//Evictor* evictor = &fifo_evictor;
+//auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
 
-//auto driver = driver();
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);
 
@@ -101,41 +100,3 @@ TEST_CASE("performance") {
     }
     driver.reset();
 }
-/*
-//new driver here; use appropriate params
-TEST_CASE("80% Hitrate")
-{
-
-    SECTION("Hitrate 80%"){
-        driver.warm(size);
-        driver.gen_req(1000);
-        REQUIRE(0.77 < driver.hitrate());//We want 80% but i'm leaving some margin of error; may reduce that later
-        REQUIRE(driver.hitrate() < 0.83);
-    }
-}
-*/
-
-//Want to test:
-//ensure a connection/getting server responses
-//test returning the cache size
-//warm the cache: call the warm function and test with cache size
-//get a hitrate and test its correctness
-
-
-
-
-
-
-//In compisition of driver:
-//20/30 get
-//1/30 set
-//9/30 delete
-//Key Size:
-//100% in ~half bell curve from 20 to 70 bytes
-//Value size:
-// 90% roughly linear up to 500B
-//last 10% linear up to ~5000B
-//Key repetition:
-//first 50% of keys in >1% of requests
-//next 40% in 9% or requests
-//next 10% in 90% of requests
