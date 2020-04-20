@@ -1,6 +1,7 @@
 Jon Takagi and Eli Poppele
 
 ## Benchmarking!
+We have moved our old cache files to a subfolder for this project; everything can still be compiled with the makefile. We use `driver_test.cc` (compiling to `test_driver.bin`) to both test some features and call both of our baseline functions, outputting data to .dat files to then be graphed. 
 
 ### Workload Generator
 Our workload generator is implemented by the Generator class in `gen.hh` and `gen.cc`. This class has a single method, along with a constructor (a bit complicated) and a destructor (basic/empty implementation). The generator tries to create a similar workload to the ETC cache from the paper. It uses a struct, `Request`, as a return type to pass to the benchmark/driver program.
