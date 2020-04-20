@@ -17,7 +17,7 @@ struct kv_json {
         stream << data.c_str();
         boost::property_tree::ptree tree;
         boost::property_tree::read_json(stream, tree);
-        std::cout << tree.get<std::string>("key") << ": " << tree.get<std::string>("value") << std::endl;
+        //std::cout << tree.get<std::string>("key") << ": " << tree.get<std::string>("value") << std::endl;
         key_ = tree.get<key_type>("key");
         value_ = tree.get<std::string>("value").c_str();
     }
