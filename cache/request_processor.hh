@@ -61,11 +61,15 @@ public:
           Cache::size_type size;
           std::cout << "getting..." << key << std::endl;
 
-          Cache::val_type val = server_cache->get(key, size);
-          if(val == nullptr){
+          Cache::val_type ret_val = server_cache->get(key, size);
+          if(ret_val == nullptr){
               std::cout << "not found" << std::endl;
               return not_found(req, key);
           } else {
+              char* val_holder = new char [size];
+              std::strncpy (val_holder, ret_val, size);
+              val_holder[size-1] = '\0';
+              Cache::val_type val = val_holder;
               std::cout << "cache["<<key<<"]=" << val << std::endl;
               res.result(boost::beast::http::status::ok);
               kv_json kv(key, val);
@@ -74,6 +78,7 @@ public:
               res.set(boost::beast::http::field::content_type, "json");
               res.content_length(json.size() + 1);
               res.prepare_payload();
+              delete val_holder;
               return res;
           }
         }

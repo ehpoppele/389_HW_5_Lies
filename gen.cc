@@ -47,12 +47,6 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         p = percent_dist(rng);
         prob = (int)((1000)/(pow(p+1, 2.3)));
         total_prob_+= prob;
-        if(key == ""){
-            std::cout << "Zero key added to data" << std::endl;
-        }
-        if(val_size == 0){
-            std::cout << "Zero length value added to data" << std::endl;
-        }
         data_type data_tuple = std::make_tuple(key, val_size, prob);
         data_.push_back(data_tuple);
         i++;
@@ -114,9 +108,6 @@ Request Generator::gen_req(bool print_results, bool set_only)
     kv_tuple = data_[i];
     key_type key = std::get<0>(kv_tuple);
     int val_size = std::get<1>(kv_tuple);
-    if(val_size == 0){
-        std::cout << "Returning a length zero value" << std::endl;
-    }
     if(print_results){
         std::cout << key + ", "<< std::to_string(val_size) + ", " << method << std::endl;
     }

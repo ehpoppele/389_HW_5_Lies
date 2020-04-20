@@ -5,12 +5,14 @@
 #include <fstream>
 #include "cache/fifo_evictor.h"
 
-Generator gen = Generator(8, 0.2, 8192, 8);
+const int CACHE_SIZE = 8192;
+
+Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
 //Generator gen = Generator(120, 0.3, 8192, 120);
-//auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-FifoEvictor fifo_evictor = FifoEvictor();
-Evictor* evictor = &fifo_evictor;
-auto test_cache = Cache(8192, 0.75, evictor); //Add the appropriate params here once chosen
+auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+//FifoEvictor fifo_evictor = FifoEvictor();
+//Evictor* evictor = &fifo_evictor;
+//auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
 
 
 const int trials = 10000;
@@ -54,7 +56,7 @@ TEST_CASE("Hitrate")
 {
 
     SECTION("Hitrate at ~80%"){
-        const int trials = 1000;
+        //const int trials = 1000;
         int hits = 0;
         for(int i = 0; i < 100; i++){
             driver.reset();
