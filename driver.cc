@@ -107,11 +107,7 @@ std::vector<double> Driver::baseline_latencies(int nreq) {
             t2 = std::chrono::high_resolution_clock::now();
         }
         std::chrono::duration<double, std::milli> elapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>> (t2-t1);
-        // if(elapsed.count() != 0) {
-        //     std::cout << elapsed.count() << std::endl;
-        // }
         results[i] = elapsed.count();
-
         // a_random_double = unif(re);
         // results[i] = a_random_double;
 
