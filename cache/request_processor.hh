@@ -41,9 +41,9 @@ public:
         return res;
     }
     http::response<http::string_body> handle_request(http::request<http::string_body> req, Cache* server_cache) {
-        std::cout << "handling request" << std::endl;
-        std::cout << "\t request method: " << req.method() << std::endl;
-        std::cout << "\t request target: " << req.target() << std::endl;
+        //std::cout << "handling request" << std::endl;
+        //std::cout << "\t request method: " << req.method() << std::endl;
+        //std::cout << "\t request target: " << req.target() << std::endl;
         if( req.method() != http::verb::get &&
             req.method() != http::verb::put &&
             req.method() != http::verb::delete_ &&
@@ -59,18 +59,18 @@ public:
         {
           key_type key = std::string(req.target()).substr(1); //make a string and slice off the "/"" from the target
           Cache::size_type size;
-          std::cout << "getting..." << key << std::endl;
+          //std::cout << "getting..." << key << std::endl;
 
           Cache::val_type ret_val = server_cache->get(key, size);
           if(ret_val == nullptr){
-              std::cout << "not found" << std::endl;
+              //std::cout << "not found" << std::endl;
               return not_found(req, key);
           } else {
               char* val_holder = new char [size];
               std::strncpy (val_holder, ret_val, size);
               val_holder[size-1] = '\0';
               Cache::val_type val = val_holder;
-              std::cout << "cache["<<key<<"]=" << val << std::endl;
+              //std::cout << "cache["<<key<<"]=" << val << std::endl;
               res.result(boost::beast::http::status::ok);
               kv_json kv(key, val);
               std::string json = kv.as_string();
@@ -93,7 +93,7 @@ public:
             std::string val_str;
             std::getline(target_string, key_str, '/');
             std::getline(target_string, val_str, '/');
-            std::cout << "setting " << key_str << " to " << val_str << std::endl;
+            //std::cout << "setting " << key_str << " to " << val_str << std::endl;
             //And now we need to convert the value into a char pointer so we can insert into the cache
             key_type key = key_str;
             Cache::val_type val = const_cast<char*>(val_str.c_str());
@@ -104,9 +104,9 @@ public:
                 key_created = true;
             }
             size = val_str.length()+1;
-            std::cout << "setting...";
+            //std::cout << "setting...";
             server_cache->set(key, val, size);
-            std::cout << "done" << std::endl;
+            //std::cout << "done" << std::endl;
             //Now we can create and send the response
             res.set(boost::beast::http::field::content_location, "/" + key_str);
             //set the appropriate status code based on if a new entry was created
@@ -124,13 +124,13 @@ public:
         //Will send a response for if key was deleted or not found; same effects either way
         if(req.method() == http::verb::delete_) {
             key_type key = std::string(req.target()).substr(1);
-            std::cout << "deleting " << key << "...";
+            //std::cout << "deleting " << key << "...";
             auto success = server_cache->del(key);
             if(success){
-                std::cout << "done" << std::endl;
+                //std::cout << "done" << std::endl;
                 res.result(boost::beast::http::status::ok);
             } else {
-                std::cout << "error: not found" << std::endl;
+                //std::cout << "error: not found" << std::endl;
                 return not_found(req, key);
             }
             res.keep_alive(req.keep_alive());
@@ -154,9 +154,9 @@ public:
             }
             //Resets the cache and sends back a basic response with string body
 
-            std::cout << "resetting the cache";
+            //std::cout << "resetting the cache";
             server_cache->reset();
-            std::cout << "done" << std::endl;
+            //std::cout << "done" << std::endl;
             http::response<boost::beast::http::string_body> res;
             res.result(boost::beast::http::status::ok);
             res.set(boost::beast::http::field::server, BOOST_BEAST_VERSION_STRING);

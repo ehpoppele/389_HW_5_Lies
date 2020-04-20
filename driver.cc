@@ -12,7 +12,6 @@
 #include <cstring>
 
 const int PERCENTILE_METRIC = 95;
-//The constructor doesn't do much, since we leave most of the heavy lifting on distribution generation etc to the warm method
 Driver::Driver(Cache* cache, Generator gen):gen_(gen)
 {
     cache_ = cache;
@@ -23,7 +22,7 @@ Driver::~Driver()
     //reset the cache? I forgot what this does
 }
 
-//warm generates new data and adds to vector until cache has gotten at least size total data
+//warm generates new data and adds to vector until cache has gotten at least size total sets
 //It creates tuples of key, val, size, and probability that are drawn from distributions designed to mimic the ETC workload
 void Driver::warm(int size)
 {
@@ -75,16 +74,6 @@ std::vector<double> Driver::baseline_latencies(int nreq) {
     std::vector<double> results(nreq);
     std::chrono::time_point<std::chrono::high_resolution_clock> t1;
     std::chrono::time_point<std::chrono::high_resolution_clock> t2;
-
-
-
-
-    // double lower_bound = 1;
-    // double upper_bound = 500;
-    // std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
-    // std::default_random_engine re;
-    // double a_random_double = 1.0;
-
     for(int i = 0; i < nreq; i++) {
         Request req = gen_.gen_req(false);
         Cache::size_type size = 0;
