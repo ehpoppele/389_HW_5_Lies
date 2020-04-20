@@ -1,6 +1,6 @@
 
 CXX=g++-8
-CXXFLAGS=-Wall -Wextra -pedantic -Werror -std=c++17 -O0 -g -I /usr/local/boost_1_72_0/ -pthread
+CXXFLAGS=-Wall -Wextra -pedantic -Werror -std=c++17 -O3 -g -I /usr/local/boost_1_72_0/ -pthread
 LDFLAGS=$(CXXFLAGS)
 OBJ=$(SRC:.cc=.o)
 BUILDDIR=out/
