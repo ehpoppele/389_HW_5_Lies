@@ -32,3 +32,6 @@ We have implemented our benchmark program in the driver files, `driver.hh` and `
 `warm` simply makes a given number of set requests to the cache. We find that using a number close to or greater than the size of the cache usually works to fill it; while most values set are much larger than 1 bytes, most are also called many times in one instance of `warm`, so we need many calls to get the cache close to full. 
 
 `baseline_latencies` works essentially as described in the project writeup, getting one request from the generator, then timing the latency of that request to the cache and recording it in the vector. `baseline_performance` similarly works as described.
+
+### Sensitivity Testing
+Using local cache, we got 95th at 0.00326ms and mean throughput at 1.66667e+08req/s.
