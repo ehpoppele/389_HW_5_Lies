@@ -6,13 +6,14 @@
 #include <cmath>
 #include "cache/fifo_evictor.h"
 
-const int CACHE_SIZE = 4096;
+const int CACHE_SIZE = 8192;
 const int TRIALS = 1000000;
 Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
-auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+
+// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
 //FifoEvictor fifo_evictor = FifoEvictor();
 //Evictor* evictor = &fifo_evictor;
-//auto test_cache = Cache(CACHE_SIZE, 0.75, evictor); //Add the appropriate params here once chosen
+auto test_cache = Cache(CACHE_SIZE, 0.95); //Add the appropriate params here once chosen
 
 Cache::size_type size;
 auto driver = Driver(&test_cache, gen);

@@ -1,5 +1,4 @@
-
-CXX=g++-8
+CXX=clang++
 CXXFLAGS=-Wall -Wextra -pedantic -Werror -std=c++17 -O3 -g -I /usr/local/boost_1_72_0/ -pthread
 LDFLAGS=$(CXXFLAGS)
 OBJ=$(SRC:.cc=.o)
