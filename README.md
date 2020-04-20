@@ -1,6 +1,7 @@
 Jon Takagi and Eli Poppele
 
 ## Benchmarking!
+We have moved our old cache files to a subfolder for this project; everything can still be compiled with the makefile. We use `driver_test.cc` (compiling to `test_driver.bin`) to both test some features and call both of our baseline functions, outputting data to .dat files to then be graphed. 
 
 ### Workload Generator
 Our workload generator is implemented by the Generator class in `gen.hh` and `gen.cc`. This class has a single method, along with a constructor (a bit complicated) and a destructor (basic/empty implementation). The generator tries to create a similar workload to the ETC cache from the paper. It uses a struct, `Request`, as a return type to pass to the benchmark/driver program.
@@ -33,6 +34,22 @@ We have implemented our benchmark program in the driver files, `driver.hh` and `
 
 `baseline_latencies` works essentially as described in the project writeup, getting one request from the generator, then timing the latency of that request to the cache and recording it in the vector. `baseline_performance` similarly works as described.
 
+Using our standard parameters (8KB of memory on a networked cache), we had a 95th percentile latency of 0.275198ms and a mean throughput of 693481 requests/second. The latency graph for these data is shown below.
+![Standard Latency](/latency&#32;8KB&#32;networked.png)
+
 ### Sensitivity Testing
-Using my (Eli's) computer, I got: 95th percentile latency: 0.071494ms ; mean throughput: 3.33333e+07req/s.
+For testing, we chose to test underlying architecture, local clients, maximum memory size, and maximum load factor. We present the data for these changes in the same graph format as that of the standard test above. 
+
+For underlying architecture, we ran the networked 8KB test on a different computer, running linux natively as opposed to in a virtual machine. In this case, we could only test this one alternative, so the result is shown in the graph below. Although this second machine is generally slower (we believe) it seems to have an advantage in a native installation as opposed to a virtual machine.
+![Native Linux Latency](/Eli_latency.png)
+
+For local versus networked client, we again had only one option, and so the latency results of running with a local cache instead of a networked cache appear below, and show a very significant decrease in latency and an increase in consistency, as expected (note the altered axis scale).
+![Local Latency](/local.png)
+
+For maximum memory size, we used a networked cache with half (4KB) and double (16KB) our standard size. All the sizes are shown in the graph below, where it appears that both altered sizes results in overall faster performance, though much more pronounced for the 16KB cache size.
+![Maximum Memory](/maxmem.png)
+
+For maximum load factor, we tested a load factor of 0.50 and 0.90. These are shown together, with the standard value of 0.75, in the graph below. Curiously, we found both changes to be better than our standard value, although 0.90 was significantly so.
+![Load Factor](/load_factor.png)
+
 

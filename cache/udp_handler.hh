@@ -13,7 +13,7 @@ namespace net = boost::asio;            // from <boost/asio.hpp>
 using udp = boost::asio::ip::udp;
 
 class udp_handler : public std::enable_shared_from_this<udp_handler> {
-net::io_context& ioc_;
+// net::io_context& ioc_;
 public:
     udp_handler(net::io_context& ioc, udp::endpoint endpoint, Cache* cache, request_processor rp);
     void run();

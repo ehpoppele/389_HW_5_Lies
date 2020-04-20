@@ -35,7 +35,7 @@ void Driver::warm(int size)
             char * val = new char [req.val_size_+1];
             std::strcpy (val, val_str.c_str());
             cache_->set(req.key_, val, req.val_size_+1);
-            delete val;
+            delete[] val;
             sets += 1;
         }
     }

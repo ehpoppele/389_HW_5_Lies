@@ -78,7 +78,7 @@ public:
               res.set(boost::beast::http::field::content_type, "json");
               res.content_length(json.size() + 1);
               res.prepare_payload();
-              delete val_holder;
+              delete[] val_holder;
               return res;
           }
         }
