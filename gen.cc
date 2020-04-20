@@ -7,6 +7,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <chrono>
 #include <iostream>
+#include <math.h>
 
 //The constructor does everything, basically
 Generator::Generator(int locality_range, double locality_shift, int size, double size_factor)
@@ -44,7 +45,7 @@ Generator::Generator(int locality_range, double locality_shift, int size, double
         size_used += val_size;
         int prob;
         p = percent_dist(rng);
-        prob = (int)(1000)/(p+1)^2;
+        prob = (int)((1000)/(pow(p+1, 2.3)));
         total_prob_+= prob;
         if(key == ""){
             std::cout << "Zero key added to data" << std::endl;
@@ -66,27 +67,31 @@ Generator::~Generator()
 }
 
 
-Request Generator::gen_req(bool print_results)
+Request Generator::gen_req(bool print_results, bool set_only)
 {
     std::random_device rd;
     std::mt19937 rng{rd()};
     std::normal_distribution<double> key_dist(43.0, 9.0);//want a normal dist spanning 15-70, so use this and clamp later
     std::uniform_int_distribution<int> method_dist(0, 30);
     std::string method;
-    int p = method_dist(rng);
-    if(p < 21){
-        method = "get";
-    } else if (p < 30){
-        method = "delete";
-        if(method_dist(rng) < 25){//8/9 of deletes should delete a nonexistent key to keep the cache full
-            int dummy_key_length = std::clamp((int)key_dist(rng), 15, 70);
-            if(print_results){
-                std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
-            }
-            return Request(std::string(dummy_key_length, 'f'), 1, method);//this is not a key that will ever be used for "set"
-        }
-    } else {
+    if(set_only){
         method = "set";
+    } else{
+        int p = method_dist(rng);
+        if(p < 21){
+            method = "get";
+        } else if (p < 30){
+            method = "delete";
+            if(method_dist(rng) < 27){//8/9 of deletes should delete a nonexistent key to keep the cache full
+                int dummy_key_length = std::clamp((int)key_dist(rng), 15, 70);
+                if(print_results){
+                    std::cout << std::string(dummy_key_length, 'f') + ", "<< std::to_string(1) + ", "<< method << std::endl;
+                }
+                return Request(std::string(dummy_key_length, 'f'), 1, method);//this is not a key that will ever be used for "set"
+            }
+        } else {
+            method = "set";
+        }
     }
     //now we select a key/value pair at random; the readme will describe how this process works
     std::uniform_int_distribution<int> kv_dist(0, total_prob_/locality_range_);
