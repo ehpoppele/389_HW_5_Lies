@@ -75,41 +75,17 @@ TEST_CASE("Hitrate")
 }
 TEST_CASE("prep_data") {
     SECTION("graph") {
-        const double OFFSET = 0;
         driver.warm(CACHE_SIZE);
         auto latencies = driver.baseline_latencies(TRIALS);
         std::sort(latencies.begin(), latencies.end());
         std::ofstream output;
-        double min_latency = 1000000;
-        double max_latency = -100000;
-        int num_bins = 20;
+        int num_bins = 100;
         std::vector<int> bins(num_bins, 0);
 
         output.open("latencies.dat");
-
-        for(int i = 0; i < TRIALS; i++) {
-            if(latencies[i] > max_latency) {
-                max_latency = latencies[i];
-            }
-            if(latencies[i] < min_latency) {
-                min_latency = latencies[i];
-            }
-            output << latencies[i] << "\n";
-        }
-        output.close();
-
-        double bin_width = (max_latency - min_latency) / num_bins;
-        for(int i = 0; i < TRIALS; i++) {
-            bins[floor(latencies[i] / bin_width)] += 1;
-        }
-
-
-
-        output.open("graph_data.dat");
         for(int i = 0; i < num_bins; i++) {
-            output << bin_width * (bins[i] + OFFSET) << std::endl;
+            output << latencies[i * TRIALS / 100] << "\t" << i << std::endl;
         }
-
         output.close();
     }
     driver.reset();
