@@ -3,11 +3,15 @@
 #include "driver.hh"
 #include <iostream>
 #include <fstream>
+#include "cache/fifo_evictor.h"
 
-const Cache::size_type CACHE_SIZE = 8192;
-Generator gen = Generator(120, 0.3, CACHE_SIZE, 120);
-// auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
-auto test_cache = Cache(CACHE_SIZE); //Add the appropriate params here once chosen
+Generator gen = Generator(8, 0.2, 8192, 8);
+//Generator gen = Generator(120, 0.3, 8192, 120);
+//auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
+FifoEvictor fifo_evictor = FifoEvictor();
+Evictor* evictor = &fifo_evictor;
+auto test_cache = Cache(8192, 0.75, evictor); //Add the appropriate params here once chosen
+
 
 const int trials = 10000;
 //auto driver = driver();
@@ -45,28 +49,32 @@ TEST_CASE("warm")
 }
 
 
+
 TEST_CASE("Hitrate")
 {
 
     SECTION("Hitrate at ~80%"){
-        driver.warm(CACHE_SIZE);
+        const int trials = 1000;
         int hits = 0;
-        int gets = 0;
-        while (gets < trials) {
-            auto req = gen.gen_req(false);
-            std::string method = req.method_;
-            if(method == "get") {
-                gets += 1;
-                Cache::val_type res = driver.get_request(req.key_);
-                if(res != nullptr){
-                    hits += 1;
+        for(int i = 0; i < 100; i++){
+            driver.reset();
+            driver.warm(CACHE_SIZE);
+            int gets = 0;
+            while (gets < trials) {
+                auto req = gen.gen_req(false);
+                std::string method = req.method_;
+                if(method == "get") {
+                    gets += 1;
+                    Cache::val_type res = driver.get_request(req.key_);
+                    if(res != nullptr){
+                        hits += 1;
+                    }
                 }
             }
         }
-        std::cout<< "hits :" + std::to_string(hits) << " out of " + std::to_string(trials) << std::endl;
-        std::cout << "hitrate: " << hits * 100.0 / trials << std::endl;
-        REQUIRE(hits > gets * 0.75);
-        REQUIRE(hits < gets * 0.85);
+        std::cout<< "hits : " + std::to_string(hits) << " out of " + std::to_string(trials*10) << std::endl;
+        REQUIRE(hits > trials * 100 * 0.75);
+        REQUIRE(hits < trials * 100 * 0.85);
     }
 
     driver.reset();

@@ -24,6 +24,6 @@ class Generator {
         ~Generator();
 
         //Generates a new request for the cache; the size, frequency, values, etc. are chosen at random based on the distributions in the driver's private data
-        Request gen_req(bool print_results = false); //for testing purposes; will print the requests and reponses in gen_req
+        Request gen_req(bool print_results = false, bool set_only = false); //for testing purposes; will print the requests and reponses in gen_req
 
 };

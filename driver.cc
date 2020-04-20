@@ -27,15 +27,14 @@ Driver::~Driver()
 //It creates tuples of key, val, size, and probability that are drawn from distributions designed to mimic the ETC workload
 void Driver::warm(int size)
 {
-    int size_used = 0;
-    while(size_used < size) {
-        Request req = gen_.gen_req(false);
+    int sets = 0;
+    while(sets < size) {
+        Request req = gen_.gen_req(false, true);
         if(req.method_ == "set") {
             std::string val_str = std::string(req.val_size_, 'B');
-            // std::cout << req.method_ << " "<< req.key_ << " to "<< val_str << std::endl;
             Cache::val_type val = val_str.c_str();
             cache_->set(req.key_, val, req.val_size_);
-            size_used += req.val_size_;
+            sets += 1;
         }
     }
 }
