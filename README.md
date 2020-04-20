@@ -34,7 +34,7 @@ We have implemented our benchmark program in the driver files, `driver.hh` and `
 `baseline_latencies` works essentially as described in the project writeup, getting one request from the generator, then timing the latency of that request to the cache and recording it in the vector. `baseline_performance` similarly works as described.
 
 Using our standard parameters (8KB of memory on a networked cache), we had a 95th percentile latency of 0.275198ms and a mean throughput of 693481 requests/second. The latency graph for these data is shown below.
-![Standard Latency](/latency 8KB networked.png)
+![Standard Latency]("/latency 8KB networked.png")
 
 ### Sensitivity Testing
 Using my (Eli's) computer, I got: 95th percentile latency: 0.071494ms ; mean throughput: 3.33333e+07req/s.
