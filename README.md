@@ -43,10 +43,12 @@ For underlying architecture, we ran the networked 8KB test on a different comput
 ![Native Linux Latency](/Eli_latency.png)
 
 For local versus networked client, we again had only one option, and so the latency results of running with a local cache instead of a networked cache appear below, and show a very significant decrease in latency and an increase in consistency, as expected (note the altered axis scale).
-![Local Latency](/latency&#32;8KB&#32;local.png)
+![Local Latency](/local.png)
 
 For maximum memory size, we used a networked cache with half (4KB) and double (16KB) our standard size. All the sizes are shown in the graph below, where we noticed a slight trend of increasing latency with increasing cache size.
+![Maximum Memory](/maxmem.png)
 
 For maximum load factor, we tested a load factor of 0.50 and 0.90. These are shown together, with the standard value of 0.75, in the graph below. Curiously, we found both changes to be better than our standard value, although 0.90 was significantly so.
+![Load Factor](/load_factor.png)
 
 
