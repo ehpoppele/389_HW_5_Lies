@@ -6,7 +6,7 @@
 #include <cmath>
 #include "cache/fifo_evictor.h"
 
-const int CACHE_SIZE = 4096;
+const int CACHE_SIZE = 8192;
 const int TRIALS = 1000000;
 Generator gen = Generator(8, 0.2, CACHE_SIZE, 8);
 auto test_cache = Cache("127.0.0.1", "42069"); //Add the appropriate params here once chosen
