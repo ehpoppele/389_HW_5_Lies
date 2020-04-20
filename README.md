@@ -42,7 +42,7 @@ For testing, we chose to test underlying architecture, local clients, maximum me
 For underlying architecture, we ran the networked 8KB test on a different computer, running linux natively as opposed to in a virtual machine. In this case, we could only test this one alternative, so the result is shown in the graph below. Although this second machine is generally slower (we believe) it seems to have an advantage in a native installation as opposed to a virtual machine.
 ![Native Linux Latency](/Eli_latency.png)
 
-For local versus networked client, we again had only one option, and so the latency results of running with a local cache instead of a networked cache appear below, and show a significant decrease in latency and an increase in consistency, as expected.
+For local versus networked client, we again had only one option, and so the latency results of running with a local cache instead of a networked cache appear below, and show a very significant decrease in latency and an increase in consistency, as expected (note the altered axis scale).
 ![Local Latency](/latency&#32;8KB&#32;local.png)
 
 For maximum memory size, we used a networked cache with half (4KB) and double (16KB) our standard size. All the sizes are shown in the graph below, where we noticed a slight trend of increasing latency with increasing cache size.
