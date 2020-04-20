@@ -37,7 +37,7 @@ class Driver {
         //Delete driver data and reset cache as well
         void reset();
 
-        std::vector<std::chrono::milliseconds> baseline_latencies(int nreq);
+        std::vector<double> baseline_latencies(int nreq);
 
         std::pair<double, double> baseline_performance(int nreq);
 
