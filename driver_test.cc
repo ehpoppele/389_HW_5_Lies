@@ -101,8 +101,8 @@ TEST_CASE("performance") {
     SECTION("part a") {
         driver.warm(CACHE_SIZE);
         auto results = driver.baseline_performance(trials);
-        std::cout << "95th percentile latency: " << results.first << std::endl;
-        std::cout << "mean throughput: " << results.second << std::endl;
+        std::cout << "95th percentile latency: " << results.first << "ms"<< std::endl;
+        std::cout << "mean throughput: " << results.second << "req/s" << std::endl;
     }
     driver.reset();
 }

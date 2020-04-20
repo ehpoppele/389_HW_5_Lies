@@ -106,10 +106,10 @@ std::vector<double> Driver::baseline_latencies(int nreq) {
         // std::cout << std::get<2>(req) << " [key: " << std::get<0>(req) << ", val: " << std::get<1>(req) <<"]"<< std::endl;
             t2 = std::chrono::high_resolution_clock::now();
         }
-        std::chrono::duration<double, std::milli> elapsed = std::chrono::duration_cast<std::chrono::milliseconds> (t2-t1);
-        if(elapsed.count() != 0) {
-            std::cout << elapsed.count() << std::endl;
-        }
+        std::chrono::duration<double, std::milli> elapsed = std::chrono::duration_cast<std::chrono::duration<double, std::milli>> (t2-t1);
+        // if(elapsed.count() != 0) {
+        //     std::cout << elapsed.count() << std::endl;
+        // }
         results[i] = elapsed.count();
 
         // a_random_double = unif(re);
@@ -121,22 +121,10 @@ std::vector<double> Driver::baseline_latencies(int nreq) {
 
 std::pair<double, double> Driver::baseline_performance(int nreq) {
     std::vector<double> latencies = baseline_latencies(nreq);
-    int non_zero_latencies = 0;
-    for(int i = 0; i < nreq; i++) {
-        if(latencies[i] != 0) {
-            std::cout << "not 0";
-            non_zero_latencies += 1;
-        }
-    }
-    std::cout << non_zero_latencies << std::endl;
     int index = PERCENTILE_METRIC * nreq / 100;
     std::sort(latencies.begin(), latencies.end());
     double percentile = latencies[index];
-    double throughput;
-    if(std::accumulate(latencies.begin(), latencies.end(), 0) == 0) {
-        throughput = -1;
-    } else {
-        throughput = nreq / std::accumulate(latencies.begin(), latencies.end(), 0);
-    }
+    double total_latency = std::accumulate(latencies.begin(), latencies.end(), 0);
+    double throughput = nreq / total_latency * std::milli::den;
     return std::make_pair(percentile, throughput);
 }
